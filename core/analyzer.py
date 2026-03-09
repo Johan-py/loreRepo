@@ -50,7 +50,7 @@ def extract_commits():
         "--numstat"
     ]
 
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, errors="ignore")
     lines = result.stdout.split("\n")
 
     commits = []
@@ -91,7 +91,9 @@ def extract_commits():
 
     df = pd.DataFrame(commits)
 
-    df["date"] = pd.to_datetime(df["date"])
+    df["date"] = pd.to_datetime(df["date"], utc=True, errors="coerce")
+    df = df.dropna(subset=["date"])
+
     df["changes"] = df["added"] + df["deleted"]
 
     return df
@@ -107,7 +109,7 @@ def compute_consistency(df):
 
     report = []
 
-    for author, data in df.groupby("author"):
+    for author, data in df.groupby("author"): 
 
         total_commits = len(data)
 
@@ -124,7 +126,7 @@ def compute_consistency(df):
         size_consistency = 1 / (1 + size_std) if not pd.isna(size_std) else 1
 
         # 3️⃣ consistencia temporal
-        commits_by_day = data.groupby(data["date"].dt.date).size()
+        commits_by_day = data.groupby(data["date"].dt.floor("D")).size()        
         freq_std = commits_by_day.std()
 
         frequency_consistency = (
