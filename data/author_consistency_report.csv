@@ -1,6 +1,4 @@
 author,total_commits,lines_added,lines_deleted,total_lines_changed,frequency_consistency,consistency_score
-roberto,1,3360,1,3361,1.0,0.45
-Johan,10,2173,196,2369,0.24,0.37
-cesar luis ibañez bellido,3,3382,0,3382,0.59,0.18
-Adrian Vallejos Flores,2,0,0,0,1.0,0.0
-robertgt0,1,1,0,1,1.0,0.0
+nameless,1,188,36,224,1,1.0
+Johan Marcelo BeltrÃ¡n MontaÃ±o,1,209,0,209,1,0.65
+dantalion_py,2,763,13,776,1,0.3
