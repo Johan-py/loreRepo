@@ -68,7 +68,6 @@ class ProfileSummary(QWidget):
                 fontweight='bold'
             )
 
-        ax1.set_title("Total Commits")
 
         # ---------- LINES CHANGED ----------
         bars2 = ax2.barh(["Lines Changed"], [lines])
@@ -85,7 +84,6 @@ class ProfileSummary(QWidget):
                 fontweight='bold'
             )
 
-        ax2.set_title("Total Lines Changed")
 
         # ---------- CONSISTENCY ----------
         bars3 = ax3.barh(["Consistency Score"], [consistency])
@@ -102,8 +100,7 @@ class ProfileSummary(QWidget):
                 fontweight='bold'
             )
 
-        ax3.set_xlim(0, 1)
-        ax3.set_title("Consistency Score")
+        ax3.set_xlim(0, 100)
 
         self.figure.tight_layout()
 

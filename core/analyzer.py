@@ -5,13 +5,17 @@ import os
 import shutil
 
 REPO_DIR = "repo_temp"
+def clamp(value, min_value=0, max_value=100):
+    return max(min_value, min(max_value, value))
 
-
-def run_analysis(repo_url):
+# ===============================
+# 🚀 ENTRYPOINT
+# ===============================
+def run_analysis(repo_url, since=None, until=None):
 
     update_repo(repo_url)
 
-    df = extract_commits()
+    df = extract_commits(since=since, until=until)
 
     report = compute_consistency(df)
 
@@ -22,9 +26,11 @@ def run_analysis(repo_url):
     return report
 
 
+# ===============================
+# 📦 CLONAR REPO
+# ===============================
 def update_repo(repo_url):
 
-    # eliminar repo anterior
     if os.path.exists(REPO_DIR):
         shutil.rmtree(REPO_DIR)
 
@@ -39,7 +45,10 @@ def update_repo(repo_url):
     ], check=True)
 
 
-def extract_commits():
+# ===============================
+# 📊 EXTRAER COMMITS
+# ===============================
+def extract_commits(since=None, until=None):
 
     cmd = [
         "git",
@@ -50,7 +59,19 @@ def extract_commits():
         "--numstat"
     ]
 
-    result = subprocess.run(cmd, capture_output=True, text=True, errors="ignore")
+    # 📅 filtros de fecha
+    if since:
+        cmd.insert(3, f"--since={since}")
+    if until:
+        cmd.insert(3, f"--until={until}")
+
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        errors="ignore"
+    )
+
     lines = result.stdout.split("\n")
 
     commits = []
@@ -58,6 +79,7 @@ def extract_commits():
 
     for line in lines:
 
+        # 🧠 nuevo commit
         if "|" in line and len(line.split("|")) >= 4:
 
             if current:
@@ -74,12 +96,12 @@ def extract_commits():
                 "deleted": 0
             }
 
+        # 📈 stats de líneas
         elif line.strip() and current:
 
             parts = line.split("\t")
 
             if len(parts) >= 3:
-
                 try:
                     current["added"] += int(parts[0])
                     current["deleted"] += int(parts[1])
@@ -91,6 +113,7 @@ def extract_commits():
 
     df = pd.DataFrame(commits)
 
+    # 🧹 limpieza
     df["date"] = pd.to_datetime(df["date"], utc=True, errors="coerce")
     df = df.dropna(subset=["date"])
 
@@ -99,52 +122,102 @@ def extract_commits():
     return df
 
 
+# ===============================
+# 🧠 CALCULAR CONSISTENCIA
+# ===============================
 def compute_consistency(df):
 
-    pattern = r"^(feat|fix|docs|refactor|test|chore)"
+    pattern = r"^(feat|fix|docs|refactor|test|chore|add)(\(.+\))?:\s*.+"
 
-    df["conventional"] = df["message"].apply(
-        lambda x: bool(re.match(pattern, x))
-    )
+    MAX_STD = 180
+    BIG_COMMIT_THRESHOLD = 251
+    MIN_LINES_THRESHOLD = 5
+    MAX_COMMITS_PER_DAY = 5
 
     report = []
 
-    for author, data in df.groupby("author"): 
+    for author, data in df.groupby("author"):
+
+        # 🚫 eliminar merges
+        data = data[~data["message"].str.startswith("Merge")].copy()
+
+        if len(data) == 0:
+            continue
+
+        # limpiar mensajes
+        def clean_msg(x):
+            return re.sub(r"\s+", " ", str(x)).strip()
+
+        data["conventional"] = data["message"].apply(
+            lambda x: bool(re.match(pattern, clean_msg(x), re.IGNORECASE))
+        )
 
         total_commits = len(data)
-
         total_added = data["added"].sum()
         total_deleted = data["deleted"].sum()
-
         total_lines = total_added + total_deleted
 
-        # 1️⃣ consistencia mensajes
-        message_consistency = data["conventional"].mean()
+        # ===============================
+        # 1️⃣ MENSAJES
+        # ===============================
+        message_score = clamp(data["conventional"].mean() * 100)
 
-        # 2️⃣ consistencia tamaño commit
+        # ===============================
+        # 2️⃣ TAMAÑO
+        # ===============================
         size_std = data["changes"].std()
-        size_consistency = 1 / (1 + size_std) if not pd.isna(size_std) else 1
 
-        # 3️⃣ consistencia temporal
-        commits_by_day = data.groupby(data["date"].dt.floor("D")).size()        
-        freq_std = commits_by_day.std()
-
-        frequency_consistency = (
-            1 / (1 + freq_std) if not pd.isna(freq_std) else 1
+        size_score = (
+            100 if pd.isna(size_std)
+            else 100 * (1 - (size_std / MAX_STD))
         )
+        size_score = size_score
 
-        # 4️⃣ granularidad
-        big_commits = (data["changes"] > 500).sum()
-        granularity_consistency = 1 - (big_commits / total_commits)
+        # ===============================
+        # 3️⃣ FRECUENCIA
+        # ===============================
+        days_active = data["date"].dt.floor("D").nunique()
+        date_range = (data["date"].max() - data["date"].min()).days + 1
 
+        if date_range <= 0:
+            frequency_score = 100
+        else:
+            activity_ratio = days_active / date_range
+            commits_per_day = total_commits / date_range
+            intensity_score = min(1, commits_per_day / MAX_COMMITS_PER_DAY)
+
+            frequency_score = (
+                (0.7 * activity_ratio) +
+                (0.3 * intensity_score)
+            ) * 100
+
+        frequency_score = clamp(frequency_score)
+
+        # ===============================
+        # 4️⃣ GRANULARIDAD
+        # ===============================
+        big_commits = (data["changes"] > BIG_COMMIT_THRESHOLD).sum()
+
+        granularity_score = (
+            1 - (big_commits / total_commits)
+        ) * 100
+
+        granularity_score = clamp(granularity_score)
+
+        # ===============================
+        # 🧮 SCORE FINAL
+        # ===============================
         consistency_score = (
-            0.35 * message_consistency +
-            0.25 * size_consistency +
-            0.20 * frequency_consistency +
-            0.20 * granularity_consistency
+            0.35 * message_score +
+            0.25 * size_score +
+            0.20 * frequency_score +
+            0.20 * granularity_score
         )
 
-        if total_lines < 100:
+        consistency_score = clamp(consistency_score)
+
+        # filtro mínimo
+        if total_lines < MIN_LINES_THRESHOLD:
             consistency_score = 0
 
         report.append({
@@ -153,16 +226,18 @@ def compute_consistency(df):
             "lines_added": int(total_added),
             "lines_deleted": int(total_deleted),
             "total_lines_changed": int(total_lines),
-            "frequency_consistency": round(frequency_consistency, 2),
+
+            "message_score": round(message_score, 2),
+            "size_score": round(size_score, 2),
+            "frequency_score": round(frequency_score, 2),
+            "granularity_score": round(granularity_score, 2),
+
             "consistency_score": round(consistency_score, 2)
         })
 
     report_df = pd.DataFrame(report)
 
-    # ordenar ranking
-    report_df = report_df.sort_values(
+    return report_df.sort_values(
         by="consistency_score",
         ascending=False
     ).reset_index(drop=True)
-
-    return report_df

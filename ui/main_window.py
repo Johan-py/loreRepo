@@ -1,6 +1,7 @@
 import sys
 import pandas as pd
-
+from PySide6.QtWidgets import QDateEdit
+from PySide6.QtCore import QDate
 from PySide6.QtWidgets import (
     QApplication,
     QWidget,
@@ -33,7 +34,28 @@ class MainWindow(QWidget):
             "https://github.com/user/repo.git"
         )
         layout.addWidget(self.repo_input)
+        
+        
+        # 📅 filtro por fecha (desde)
+        self.since_label = QLabel("Desde")
+        layout.addWidget(self.since_label)
 
+        self.since_input = QDateEdit()
+        self.since_input.setCalendarPopup(True)
+        self.since_input.setDate(QDate.currentDate().addDays(-7))  # default: últimos 7 días
+        layout.addWidget(self.since_input)
+
+
+        # 📅 filtro por fecha (hasta)
+        self.until_label = QLabel("Hasta")
+        layout.addWidget(self.until_label)
+
+        self.until_input = QDateEdit()
+        self.until_input.setCalendarPopup(True)
+        self.until_input.setDate(QDate.currentDate())
+        layout.addWidget(self.until_input)
+        
+        
         self.analyze_button = QPushButton("Analizar repositorio")
         self.analyze_button.clicked.connect(self.analyze_repo)
         layout.addWidget(self.analyze_button)
@@ -59,7 +81,18 @@ class MainWindow(QWidget):
 
         repo_url = self.repo_input.text()
 
-        self.df = run_analysis(repo_url)
+        if not repo_url:
+            self.label.setText("⚠️ Ingresa un repositorio válido")
+            return
+
+        # 📅 convertir QDate → string
+        since_qdate = self.since_input.date()
+        until_qdate = self.until_input.date()
+
+        since = since_qdate.toString("yyyy-MM-dd")
+        until = until_qdate.toString("yyyy-MM-dd")
+
+        self.df = run_analysis(repo_url, since=since, until=until)
 
         self.show_table(self.df)
 
