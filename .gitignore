@@ -5,7 +5,8 @@ __pycache__/
 
 # C extensions
 *.so
-
+repo_temp/
+repo_temp.git
 # Distribution / packaging
 .Python
 build/
