@@ -3,10 +3,30 @@ import pandas as pd
 import re
 import os
 import shutil
+import unicodedata
 
 REPO_DIR = "repo_temp"
+
+
+# ===============================
+# 🔧 UTILIDADES
+# ===============================
 def clamp(value, min_value=0, max_value=100):
     return max(min_value, min(max_value, value))
+
+
+def normalize_text(text):
+    text = str(text).lower().strip()
+
+    # quitar tildes
+    text = unicodedata.normalize('NFKD', text)
+    text = ''.join(c for c in text if not unicodedata.combining(c))
+
+    # normalizar espacios
+    text = re.sub(r"\s+", " ", text)
+
+    return text
+
 
 # ===============================
 # 🚀 ENTRYPOINT
@@ -17,9 +37,16 @@ def run_analysis(repo_url, since=None, until=None):
 
     df = extract_commits(since=since, until=until)
 
+    df_users = load_user_mapping()
+
+    df = normalize_authors(df, df_users)
+
+    # 🔍 DEBUG (opcional)
+    print("\n--- AUTORES NORMALIZADOS ---")
+    print(df[["author", "display_name"]].drop_duplicates().head(20))
+
     report = compute_consistency(df)
 
-    # guardar reporte
     os.makedirs("data", exist_ok=True)
     report.to_csv("data/author_consistency_report.csv", index=False)
 
@@ -54,12 +81,11 @@ def extract_commits(since=None, until=None):
         "git",
         f"--git-dir={REPO_DIR}",
         "log",
-        "--pretty=format:%H|%an|%ad|%s",
+        "--pretty=format:%H|%an|%ae|%ad|%s",
         "--date=iso",
-        "--numstat"
+        "--numstat",
     ]
 
-    # 📅 filtros de fecha
     if since:
         cmd.insert(3, f"--since={since}")
     if until:
@@ -79,24 +105,21 @@ def extract_commits(since=None, until=None):
 
     for line in lines:
 
-        # 🧠 nuevo commit
-        if "|" in line and len(line.split("|")) >= 4:
-
+        if "|" in line and len(line.split("|")) >= 5:
             if current:
                 commits.append(current)
 
-            h, author, date, msg = line.split("|", 3)
-
+            h, author, email, date, msg = line.split("|", 4)
             current = {
                 "hash": h,
                 "author": author.strip(),
+                "email": email.strip(),
                 "date": date,
                 "message": msg.strip(),
                 "added": 0,
                 "deleted": 0
             }
 
-        # 📈 stats de líneas
         elif line.strip() and current:
 
             parts = line.split("\t")
@@ -113,7 +136,6 @@ def extract_commits(since=None, until=None):
 
     df = pd.DataFrame(commits)
 
-    # 🧹 limpieza
     df["date"] = pd.to_datetime(df["date"], utc=True, errors="coerce")
     df = df.dropna(subset=["date"])
 
@@ -121,6 +143,83 @@ def extract_commits(since=None, until=None):
 
     return df
 
+
+# ===============================
+# 👥 CARGAR USUARIOS
+# ===============================
+def load_user_mapping(path="data/users.csv"):
+    df_users = pd.read_csv(path)
+
+    # 🔥 eliminar pendientes (sin nombre)
+    df_users = df_users.dropna(subset=["nombre_completo", "github_username"])
+    df_users["nombre_norm"] = df_users["nombre_completo"].apply(normalize_text)
+    df_users["user_norm"] = df_users["github_username"].apply(normalize_text)
+
+    return df_users
+
+# ===============================
+# 🔄 NORMALIZAR AUTORES
+# ===============================
+def normalize_authors(df, df_users):
+
+    df["author_raw"] = df["author"]
+    df["author_norm"] = df["author"].apply(normalize_text)
+
+    mapping_user = dict(zip(df_users["user_norm"], df_users["nombre_completo"]))
+    mapping_name = dict(zip(df_users["nombre_norm"], df_users["nombre_completo"]))
+
+    # 🔥 alias manual (ajústalo según tu equipo)
+    ALIASES = {
+        "parche": "Adrian Perez Tapia",
+        "alex": "Alex Choque Ajata",
+        "jose": "Jose Adrian Villazon Rojas"
+    }
+
+    def resolve_display(author, email):
+        a = normalize_text(author)
+        e = normalize_text(email)
+
+        # 🔧 limpiar emails tipo GitHub (12345+user@...)
+        e = re.sub(r".*\+", "", e)
+
+        # 0. alias manual
+        if a in ALIASES:
+            return ALIASES[a]
+
+        # 1. username exacto (author)
+        if a in mapping_user:
+            return mapping_user[a]
+
+        # 2. username dentro del email
+        for user in mapping_user:
+            if re.search(rf"\b{re.escape(user)}\b", e):
+                return mapping_user[user]
+
+        # 3. nombre exacto
+        if a in mapping_name:
+            return mapping_name[a]
+
+        # 4. username parcial en author
+        for user in mapping_user:
+            if user in a:
+                return mapping_user[user]
+
+        # 5. nombre parcial en author
+        for name in mapping_name:
+            if name in a:
+                return mapping_name[name]
+
+        # ⚠️ no encontrado
+        print(f"[WARN] Autor no mapeado: {author} | {email}")
+        return author
+
+    # 🔥 aplicar resolución combinando author + email
+    df["display_name"] = df.apply(
+        lambda row: resolve_display(row["author"], row["email"]),
+        axis=1
+    )
+
+    return df
 
 # ===============================
 # 🧠 CALCULAR CONSISTENCIA
@@ -136,15 +235,13 @@ def compute_consistency(df):
 
     report = []
 
-    for author, data in df.groupby("author"):
+    # 🔥 agrupar por persona real
+    for author, data in df.groupby("display_name"):
 
-        # 🚫 eliminar merges
-        data = data[~data["message"].str.startswith("Merge")].copy()
-
+        data = data[~data["message"].fillna("").str.startswith("Merge")].copy()
         if len(data) == 0:
             continue
 
-        # limpiar mensajes
         def clean_msg(x):
             return re.sub(r"\s+", " ", str(x)).strip()
 
@@ -157,25 +254,17 @@ def compute_consistency(df):
         total_deleted = data["deleted"].sum()
         total_lines = total_added + total_deleted
 
-        # ===============================
-        # 1️⃣ MENSAJES
-        # ===============================
+        # 1️⃣ mensajes
         message_score = clamp(data["conventional"].mean() * 100)
 
-        # ===============================
-        # 2️⃣ TAMAÑO
-        # ===============================
+        # 2️⃣ tamaño
         size_std = data["changes"].std()
-
-        size_score = (
+        size_score = clamp(
             100 if pd.isna(size_std)
             else 100 * (1 - (size_std / MAX_STD))
         )
-        size_score = size_score
 
-        # ===============================
-        # 3️⃣ FRECUENCIA
-        # ===============================
+        # 3️⃣ frecuencia
         days_active = data["date"].dt.floor("D").nunique()
         date_range = (data["date"].max() - data["date"].min()).days + 1
 
@@ -193,35 +282,27 @@ def compute_consistency(df):
 
         frequency_score = clamp(frequency_score)
 
-        # ===============================
-        # 4️⃣ GRANULARIDAD
-        # ===============================
+        # 4️⃣ granularidad
         big_commits = (data["changes"] > BIG_COMMIT_THRESHOLD).sum()
 
-        granularity_score = (
-            1 - (big_commits / total_commits)
-        ) * 100
+        granularity_score = clamp(
+            (1 - (big_commits / total_commits)) * 100
+        )
 
-        granularity_score = clamp(granularity_score)
-
-        # ===============================
-        # 🧮 SCORE FINAL
-        # ===============================
-        consistency_score = (
+        # 🧮 final
+        consistency_score = clamp(
             0.35 * message_score +
             0.25 * size_score +
             0.20 * frequency_score +
             0.20 * granularity_score
         )
 
-        consistency_score = clamp(consistency_score)
-
-        # filtro mínimo
         if total_lines < MIN_LINES_THRESHOLD:
             consistency_score = 0
 
         report.append({
-            "author": author,
+            "author": author,  # ← nombre real
+            "aliases": ", ".join(data["author_raw"].unique()),  # 🔥 bonus
             "total_commits": int(total_commits),
             "lines_added": int(total_added),
             "lines_deleted": int(total_deleted),

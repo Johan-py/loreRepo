@@ -14,13 +14,19 @@ class ProfileSummary(QWidget):
 
         self.df = df
         self.author = author
+        row = df[df["author"] == author]
 
+        if row.empty:
+            raise ValueError(f"Autor no encontrado: {author}")
+
+        self.row = row.iloc[0]  # 🔥 guardar fila completa
+        self.display_name = self.row["author"]
         self.setWindowTitle(f"Perfil de {author}")
         self.resize(900, 700)
 
         layout = QVBoxLayout()
 
-        title = QLabel(f"Perfil de contribución: {author}")
+        title = QLabel(f"Perfil de contribución: {self.display_name}")
         layout.addWidget(title)
 
         # botón volver
@@ -41,11 +47,11 @@ class ProfileSummary(QWidget):
 
         sns.set_theme(style="darkgrid")
 
-        df_author = self.df[self.df["author"] == self.author]
+        df_author = self.df[self.df["author"] == self.display_name]
 
-        commits = df_author["total_commits"].values[0]
-        lines = df_author["total_lines_changed"].values[0]
-        consistency = df_author["consistency_score"].values[0]
+        commits = self.row["total_commits"]
+        lines = self.row["total_lines_changed"]
+        consistency = self.row["consistency_score"]
 
         self.figure.clear()
 
