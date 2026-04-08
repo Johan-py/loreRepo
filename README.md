@@ -1,5 +1,5 @@
 # Author Consistency Analyzer
-
+## v2.3
 Herramienta de análisis de repositorios Git que evalúa la **consistencia de los commits por autor** a partir del historial del repositorio.
 
 El programa clona un repositorio, extrae los commits y calcula métricas de consistencia para cada desarrollador.
