@@ -7,7 +7,13 @@ import unicodedata
 
 REPO_DIR = "repo_temp"
 
-
+# ===============================
+# ⚙️ CONFIG DE SPRINT
+# ===============================
+SPRINT_DAYS = 21
+IDEAL_MIN_COMMITS = 7
+IDEAL_MAX_COMMITS = 100
+IDEAL_COMMITS_PER_SPRINT = 10
 # ===============================
 # 🔧 UTILIDADES
 # ===============================
@@ -27,7 +33,25 @@ def normalize_text(text):
 
     return text
 
+def compute_commit_score(total_commits):
+    if IDEAL_MIN_COMMITS <= total_commits <= IDEAL_MAX_COMMITS:
+        return 100
 
+    if total_commits < IDEAL_MIN_COMMITS:
+        return clamp(100 * (total_commits / IDEAL_MIN_COMMITS))
+
+    excess = total_commits - IDEAL_MAX_COMMITS
+    return clamp(100 - (excess * 5))
+
+
+def compute_frequency_score(days_active, total_commits):
+    activity_ratio = days_active / SPRINT_DAYS
+    commits_per_day = total_commits / SPRINT_DAYS
+
+    ideal_per_day = IDEAL_COMMITS_PER_SPRINT / SPRINT_DAYS
+    intensity_score = min(1, commits_per_day / ideal_per_day)
+
+    return clamp((0.6 * activity_ratio + 0.4 * intensity_score) * 100)
 # ===============================
 # 📦 CLONAR REPO
 # ===============================
@@ -354,12 +378,15 @@ def normalize_authors(df, df_users):
 # 🧠 CALCULAR CONSISTENCIA
 # ===============================
 def compute_consistency(df):
-    pattern = r"^(feat|fix|docs|refactor|test|chore|add)(\(.+\))?:\s*.+"
+    MAX_STD = 350
+    BIG_COMMIT_THRESHOLD = 1000
+    MIN_LINES_THRESHOLD = 20
 
-    MAX_STD = 180
-    BIG_COMMIT_THRESHOLD = 251
-    MIN_LINES_THRESHOLD = 5
-    MAX_COMMITS_PER_DAY = 5
+    # 🎯 NUEVO: rango ideal de tamaño por commit
+    IDEAL_MIN_LINES = 20
+    IDEAL_MAX_LINES = 300
+
+    pattern = r"^(feat|fix|docs|refactor|test|chore|add)(\(.+\))?:\s*.+"
 
     report = []
 
@@ -380,42 +407,60 @@ def compute_consistency(df):
         total_deleted = data["deleted"].sum()
         total_lines = total_added + total_deleted
 
+        # =========================
+        # 🎯 SCORES
+        # =========================
         message_score = clamp(data["conventional"].mean() * 100)
 
+        # 📊 Consistencia de tamaño (dispersión)
         size_std = data["changes"].std()
+        print(size_std)
         size_score = clamp(
             100 if pd.isna(size_std)
             else 100 * (1 - (size_std / MAX_STD))
         )
 
+        # 🆕 Calidad de tamaño por commit (nuevo)
+        size_quality = data["changes"].apply(
+            lambda x: 1 if IDEAL_MIN_LINES <= x <= IDEAL_MAX_LINES else 0
+        ).mean()
+        size_quality_score = clamp(size_quality * 100)
+
+        # 📅 Frecuencia
         days_active = data["date"].dt.floor("D").nunique()
-        date_range = (data["date"].max() - data["date"].min()).days + 1
+        frequency_score = compute_frequency_score(days_active, total_commits)
 
-        if date_range <= 0:
-            frequency_score = 100
-        else:
-            activity_ratio = days_active / date_range
-            commits_per_day = total_commits / date_range
-            intensity_score = min(1, commits_per_day / MAX_COMMITS_PER_DAY)
-
-            frequency_score = (
-                (0.7 * activity_ratio) +
-                (0.3 * intensity_score)
-            ) * 100
-
-        frequency_score = clamp(frequency_score)
-
+        # 📦 Granularidad (commits grandes)
         big_commits = (data["changes"] > BIG_COMMIT_THRESHOLD).sum()
         granularity_score = clamp(
             (1 - (big_commits / total_commits)) * 100
         )
 
+        # 📈 Cantidad de commits
+        commit_score = compute_commit_score(total_commits)
+
+        # =========================
+        # 🧠 SCORE FINAL (MEJORADO)
+        # =========================
         consistency_score = clamp(
-            0.35 * message_score +
-            0.25 * size_score +
-            0.20 * frequency_score +
-            0.20 * granularity_score
+            0.20 * commit_score +
+            0.30 * message_score +
+            0.10 * size_quality_score +   
+            0.10 * frequency_score +
+            0.30 * granularity_score
         )
+
+        # =========================
+        # 🚨 FLAGS DE COMPORTAMIENTO
+        # =========================
+        if total_commits < 5:
+            consistency_score *= 0.7
+
+        if total_commits > 20:
+            consistency_score *= 0.85
+
+        if big_commits > total_commits * 0.3:
+            consistency_score *= 0.8
 
         if total_lines < MIN_LINES_THRESHOLD:
             consistency_score = 0
@@ -428,6 +473,7 @@ def compute_consistency(df):
             "lines_deleted": int(total_deleted),
             "total_lines_changed": int(total_lines),
 
+            "commit_score": round(commit_score, 2),
             "message_score": round(message_score, 2),
             "size_score": round(size_score, 2),
             "frequency_score": round(frequency_score, 2),
@@ -442,7 +488,6 @@ def compute_consistency(df):
         by="consistency_score",
         ascending=False
     ).reset_index(drop=True)
-
 
 # ===============================
 # 🚀 ENTRYPOINT PRINCIPAL (UNIFICADO)

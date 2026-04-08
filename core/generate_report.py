@@ -54,6 +54,7 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
     # -------------------------------
     required_columns = [
         "author", "total_commits", "total_lines_changed",
+        "commit_score",  # 🆕
         "message_score", "size_score", "frequency_score",
         "granularity_score", "consistency_score"
     ]
@@ -162,7 +163,15 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
     try:
         elements.append(Paragraph("Estadísticas Generales", styles["Heading3"]))
         elements.append(Spacer(1, 8))
-        
+        elements.append(Paragraph("Modelo de Evaluación", styles["Heading3"]))
+        elements.append(Spacer(1, 6))
+
+        formula_text = """
+        Score = 20% Commits + 20% Mensajes + 20% Tamaño + 20% Frecuencia + 20% Granularidad
+        """
+
+        elements.append(Paragraph(formula_text, styles["Normal"]))
+        elements.append(Spacer(1, 10))
         total_authors = len(df)
         total_commits = df['total_commits'].sum()
         total_lines = df['total_lines_changed'].sum()
@@ -214,7 +223,12 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
             lines = int(row['total_lines_changed'])
             
             medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉"
-            text = f"{medal} {i}. {author_name} — Consistencia: {score:.2f} | Commits: {commits:,} | Líneas: {lines:,}"
+            text = (
+                f"{medal} {i}. {author_name} — Score: {score:.2f} | "
+                f"C:{row['commit_score']:.0f} M:{row['message_score']:.0f} "
+                f"S:{row['size_score']:.0f} F:{row['frequency_score']:.0f} "
+                f"G:{row['granularity_score']:.0f}"
+            )
             elements.append(Paragraph(text, styles["Normal"]))
             elements.append(Spacer(1, 4))
 
@@ -229,7 +243,15 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
         elements.append(Paragraph("Reporte Detallado por Autor", styles["Heading3"]))
         elements.append(Spacer(1, 8))
         
-        columns = ["Autor", "Commits", "Líneas", "Mensajes", "Tamaño", "Frecuencia", "Granularidad", "Puntuación"]
+        columns = [
+            "Autor", "Commits", "Líneas",
+            "Commits#",   # 🆕
+            "Mensajes",
+            "Tamaño",
+            "Frecuencia",
+            "Granularidad",
+            "Score"
+        ]
         data = [columns]
 
         for _, row in df.iterrows():
@@ -250,6 +272,7 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
                 html.escape(str(row["author"])),
                 f"{int(row['total_commits']):,}",
                 f"{int(row['total_lines_changed']):,}",
+                format_score(row["commit_score"]),
                 format_score(row["message_score"]),
                 format_score(row["size_score"]),
                 format_score(row["frequency_score"]),
@@ -258,7 +281,7 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
             ])
 
         # Calcular anchos de columna
-        col_widths = [160, 60, 70, 55, 55, 55, 60, 65]
+        col_widths = [130, 50, 60, 50, 50, 50, 50, 55, 60]
         table = LongTable(data, repeatRows=1, colWidths=col_widths)
 
         # Estilo base de la tabla
@@ -328,11 +351,12 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
         elements.append(Spacer(1, 20))
         footer_text = """
         Notas:
-        • Puntuación de Consistencia: combina mensajes conventional commit, tamaño de cambios, frecuencia y granularidad
+        • Puntuación de Consistencia: promedio ponderado de 5 métricas (20% cada una)
+        • Commits: evalúa si el número de commits está dentro del rango ideal del sprint
         • Mensajes: porcentaje de commits con formato Conventional Commit
-        • Tamaño: desviación estándar del tamaño de los commits (menor desviación = más consistente)
-        • Frecuencia: regularidad de actividad en el tiempo
-        • Granularidad: porcentaje de commits pequeños y enfocados
+        • Tamaño: consistencia en el tamaño de los commits (desviación estándar)
+        • Frecuencia: regularidad de actividad durante el sprint
+        • Granularidad: penaliza commits excesivamente grandes
         """
         elements.append(Paragraph(footer_text, styles["Normal"]))
     except Exception as e:

@@ -1,48 +1,77 @@
-author,aliases,total_commits,lines_added,lines_deleted,total_lines_changed,message_score,size_score,frequency_score,granularity_score,consistency_score
-Adrian Perez Tapia,Parche,5,48,14,62,100.0,93.91,100.0,100.0,98.48
-JoséAL,JoséAL,3,16,7,23,100.0,97.15,88.0,100.0,96.89
-Mireya Edly Rojas Reque,mireyaRojas-max,2,14,5,19,100.0,99.61,82.0,100.0,96.3
-WILBER LANCEA MAMANI,WILBER LANCEA MAMANI,3,28,0,28,100.0,99.68,79.0,100.0,95.72
-Miguel Angel Massi Geronimo,Miguel Angel Massi Geronimo,2,11,1,12,100.0,96.86,82.0,100.0,95.61
-Briza Zurita Zelada,brizabelzz,2,9,0,9,100.0,96.46,82.0,100.0,95.52
-José Alejandro Pardo Bautista,AlejandroPardoB,2,9,0,9,100.0,96.46,82.0,100.0,95.52
-hurtado,hurtado,2,9,0,9,100.0,96.46,82.0,100.0,95.52
-Jorge Paniagua,Jorge Paniagua,1,122,0,122,100.0,100.0,76.0,100.0,95.2
-Giovani-Quiroz,Giovani-Quiroz,1,10,0,10,100.0,100.0,76.0,100.0,95.2
-Calep Giovanni Patiño Lazarte,CalepP,1,9,0,9,100.0,100.0,76.0,100.0,95.2
-Fernandez Velasco Jhon Aldo,gruezomen,1,10,0,10,100.0,100.0,76.0,100.0,95.2
-Esther Romero Menacho,Esther2419,1,11,12,23,100.0,100.0,76.0,100.0,95.2
-CristianEncinas014,CristianEncinas014,1,9,0,9,100.0,100.0,76.0,100.0,95.2
-MadahiCondori,MadahiCondori,1,9,0,9,100.0,100.0,76.0,100.0,95.2
-x,x,1,9,0,9,100.0,100.0,76.0,100.0,95.2
-Melody Alejandra Gutierrez Caero,MelodyGutierrezC,1,9,0,9,100.0,100.0,76.0,100.0,95.2
-Rodrigo Quispe Vargas,Rodrigo Quispe,1,9,0,9,100.0,100.0,76.0,100.0,95.2
-Jhonatan David Quispe Perez,JhonatanDavidQuispePerez,1,9,0,9,100.0,100.0,76.0,100.0,95.2
-Noemi Condori Gaspar,Noemi Condori Gaspar,2,12,1,13,100.0,94.89,82.0,100.0,95.12
-Jofre Ticona Plata,JOFRE TICONA PLATA,2,19,1,20,100.0,99.21,76.0,100.0,95.0
-Joaquin Octavio Tapia Vera,Joaquin Octavio Tapia Vera,3,24,6,30,100.0,94.15,52.67,100.0,89.07
-Gerson Steven Fernandez Ricalde,Xu-chuu,6,25,20,45,66.67,95.19,100.0,100.0,87.13
-Shawn Brandon Bellido Zeballos,Tu Nombre,2,18,3,21,50.0,98.82,100.0,100.0,82.21
-Jhoel Andrés Zeballos Romero,JHOEL ANDRES ZEBALLOS ROMERO,4,20,0,20,50.0,97.1,78.0,100.0,77.37
-Eliot Rodrigo Heredia Villanueva,"Eliot Rodrigo Heredia Villanueva, unidadLK520",6,17,6,23,33.33,97.88,100.0,100.0,76.14
-Alex Choque Ajata,"Alex Choque Ajata, Alex",6,28,10,38,16.67,96.41,82.0,100.0,66.33
-Vladimir Camacho Cabrera,"Vlady610, Vladimir Camacho Cabrera",4,13,4,17,0.0,98.16,94.0,100.0,63.34
-Jose Jonatan Zambrana Escobar,JonatanZambrana,5,11398,192,11590,100.0,0.0,100.0,40.0,63.0
-Juan David Gutierrez Lucero,JUAN DAVID GUTIERREZ LUCERO,3,3,3,6,0.0,100.0,88.0,100.0,62.6
-Neida Zeballos Tejada,Neidazeballostejada,3,16,8,24,0.0,97.78,88.0,100.0,62.04
-Gonzalo Ayra Torrico,gonzalo-ayra,2,18,0,18,0.0,100.0,82.0,100.0,61.4
-Gustavo Corrales,Gustavo Corrales,2,19,0,19,0.0,99.61,82.0,100.0,61.3
-Jose Adrian Villazon Rojas,Jose,2,10,1,11,0.0,97.25,82.0,100.0,60.71
-Carlos Mangudo,carlosjunior9,1,9,0,9,0.0,100.0,76.0,100.0,60.2
-Alberth Fuentes Bustamante,Alberth Fuentes Bustamante,1,9,0,9,0.0,100.0,76.0,100.0,60.2
-202000706-star,202000706-star,1,9,12,21,0.0,100.0,76.0,100.0,60.2
-Amir Asaith Ureña Vidal,AmirVidal,1,10,1,11,0.0,100.0,76.0,100.0,60.2
-Eduardo Francisco Kilibarda Lima,FranciscoKilibarda,1,10,0,10,0.0,100.0,76.0,100.0,60.2
-Emilio Alejo Roberto Carlos,rcaem,1,13,1,14,0.0,100.0,76.0,100.0,60.2
-Carlos Josue Vasquez Huanca,vasquezhuancacarlos,1,9,0,9,0.0,100.0,76.0,100.0,60.2
-Joel Ariel Llusco Acho,PanaShusco,1,10,0,10,0.0,100.0,76.0,100.0,60.2
-Israel Jimenez Quinteros,israel-jq,1,11,1,12,0.0,100.0,76.0,100.0,60.2
-rickonnen,rickonnen,1,22,0,22,0.0,100.0,76.0,100.0,60.2
-Joel Fernando Vera Orellana,J03L5009,3,19,11,30,0.0,94.15,79.0,100.0,59.34
-Manuel Tellez,Manuel Tellez,7,200,203,403,0.0,60.39,100.0,100.0,55.1
-Johan Marcelo Beltrán Montaño,"Johan-py, Johan Marcelo Beltrán Montaño",102,3645,4329,7974,26.47,0.0,91.25,93.14,46.14
+author,aliases,total_commits,lines_added,lines_deleted,total_lines_changed,commit_score,message_score,size_score,frequency_score,granularity_score,consistency_score
+Jofre Ticona Plata,"JOFRE TICONA PLATA, Jofre Ticona Plata",15,1014,99,1113,100.0,100.0,73.57,54.29,100.0,93.43
+Noemi Condori Gaspar,Noemi Condori Gaspar,13,580,498,1078,100.0,100.0,61.72,54.29,100.0,91.58
+Jhonatan David Quispe Perez,JhonatanDavidQuispePerez,11,376,144,520,100.0,100.0,86.08,54.29,100.0,90.88
+Alberth Fuentes Bustamante,Alberth-Std,16,1559,787,2346,100.0,100.0,47.96,60.0,100.0,90.38
+Cristhian Alba Zapata,Cristhian Alba Zapata,10,381,346,727,100.0,90.0,82.74,51.43,100.0,89.14
+Wilber Ojeda Valente,OjedaValenteWilber08,11,189,47,236,100.0,100.0,91.51,51.43,100.0,87.87
+Juan David Gutierrez Lucero,Jaodeivid,20,855,758,1613,100.0,85.0,65.91,62.86,100.0,86.79
+Giovani-Quiroz,Giovani-Quiroz,19,366,214,580,100.0,89.47,90.6,54.29,100.0,86.48
+Alberto Quispe Ramirez,"AlbertoQuispe478, AlbertoQuispe",8,392,174,566,100.0,87.5,79.21,43.43,100.0,85.59
+Calep Giovanni Patiño Lazarte,CalepP,11,250,42,292,100.0,81.82,92.96,54.29,100.0,85.43
+Tarque Guzman Oscar,Tarque Guzman Oscar,6,980,417,1397,85.71,100.0,28.73,32.57,100.0,85.4
+Madahi Angeles Aranibar Mamani,madahiangeles,10,802,57,859,100.0,80.0,72.06,51.43,100.0,85.14
+CristianEncinas014,CristianEncinas014,9,731,642,1373,100.0,88.89,32.42,44.57,100.0,84.46
+Darlyn,Darlyn,9,483,359,842,100.0,77.78,71.37,44.57,100.0,84.46
+Alex Nina Copatiti,alexnina01,17,5583,4122,9705,100.0,82.35,0.0,48.57,88.24,83.09
+Mireya Edly Rojas Reque,mireyaRojas-max,7,211,6,217,100.0,85.71,91.58,30.86,100.0,83.09
+Briza Zurita Zelada,Briza Zurita Zelada,11,453,66,519,100.0,81.82,74.45,54.29,100.0,82.7
+Jhilmer Chinchilla Condori,Jhilmer Chinchilla Condori,8,610,450,1060,100.0,75.0,62.33,40.57,100.0,81.56
+isra-jq,isra-jq,6,394,192,586,85.71,66.67,80.89,35.43,100.0,80.69
+Ninel Daniela Alcocer Zabala,Ninel-A,11,5546,4641,10187,100.0,81.82,0.0,51.43,90.91,78.78
+Shawn brandon,Shawn brandon,7,558,552,1110,100.0,57.14,40.48,39.43,100.0,78.23
+Joel Ariel Llusco Acho,PanaShusco,26,2975,1224,4199,100.0,88.46,53.1,65.71,100.0,76.85
+Alejandro Amaru Condori Morales,aacm592,21,430,226,656,100.0,100.0,86.82,62.86,100.0,76.58
+Wilber_Lancea,Wilber_Lancea,10,1630,667,2297,100.0,50.0,26.08,54.29,100.0,76.43
+Alex Choque Ajata,Alex,18,401,164,565,100.0,50.0,90.52,62.86,100.0,76.29
+Adrian Perez Tapia,Parche,13,538,52,590,100.0,53.85,84.21,54.29,100.0,76.2
+Yuri Daniel Ayaviri Quispe,j0jii,8,2260,1963,4223,100.0,62.5,0.0,46.29,87.5,75.88
+Rodrigo Figueroa Camacho,Rodrigo Figueroa Camacho,18,781,365,1146,100.0,50.0,77.26,51.43,100.0,75.7
+Joaquin Octavio Tapia Vera,Joaquin Octavio Tapia Vera,22,3469,2030,5499,100.0,95.45,0.0,57.14,95.45,75.18
+Jorge_Paniagua,Jorge_Paniagua,72,5868,2645,8513,100.0,90.28,0.0,65.71,97.22,73.23
+Johan Marcelo Beltrán Montaño,"Johan b., Johan Marcelo Beltrán Montaño, Johan-py",62,2882,7755,10637,100.0,93.55,0.0,60.0,93.55,72.96
+Miguel Angel Massi Geronimo,Miguel Angel Massi Geronimo,30,11859,13283,25142,100.0,86.67,0.0,60.0,90.0,72.25
+Esther Romero Menacho,"Esther Romero Menacho, Esther2419",28,1191,1049,2240,100.0,71.43,56.64,54.29,100.0,70.49
+Fernandez Velasco Jhon Aldo,gruezomen,29,2965,1993,4958,100.0,72.41,0.0,60.0,96.55,67.82
+Lia Cardenas,Lia Cardenas,8,2140,2350,4490,100.0,50.0,0.0,46.29,87.5,67.13
+Luis Huanca Mamani,Luis Huanca Mamani,12,2334,1565,3899,100.0,50.0,0.0,54.29,83.33,67.1
+mariela chamo,mariela chamo,14,1031,79,1110,100.0,28.57,55.99,51.43,100.0,66.57
+Manuel Tellez,Manuel Tellez,13,616,1987,2603,100.0,30.77,0.0,57.14,92.31,64.18
+Neida Zeballos Tejada,Neidazeballostejada,19,1301,475,1776,100.0,0.0,74.72,57.14,100.0,63.08
+Jhoel Andrés Zeballos Romero,JHOEL ANDRES ZEBALLOS ROMERO,6,537,282,819,85.71,16.67,64.87,29.71,100.0,61.78
+Carlos Josue Vasquez Huanca,vasquezhuancacarlos,9,274,185,459,100.0,0.0,81.45,47.43,100.0,61.41
+Jhonn Pablo Calsina Soto,Jhonn Pablo Calsina Soto,14,146,919,1065,100.0,21.43,30.49,45.71,100.0,61.0
+Mauricio Pinto Salazar,Mauricio Pinto Salazar,13,8773,6873,15646,100.0,23.08,0.0,42.86,92.31,60.44
+MadahiCondori,MadahiCondori,33,1071,304,1375,100.0,27.27,84.41,65.71,100.0,59.68
+felipe,felipe,21,2821,1636,4457,100.0,38.1,1.71,65.71,95.24,59.42
+Eduardo Francisco Kilibarda Lima,FranciscoKilibarda,25,2214,1254,3468,100.0,24.0,46.68,62.86,100.0,59.06
+Gonzalo Ayra Torrico,gonzalo-ayra,9,710,180,890,100.0,0.0,45.9,44.57,100.0,58.9
+Jose Adrian Villazon Rojas,Jose,8,98,20,118,100.0,0.0,94.9,37.71,100.0,57.52
+William Vela Uribe,William-Vela-Uribe,6,56,53,109,85.71,0.0,93.87,38.29,100.0,55.97
+Javier Gustavo Corrales Delgadillo,Javier Gustavo Corrales Delgadillo,11,2720,1845,4565,100.0,0.0,0.0,48.57,90.91,55.77
+Amir Asaith Ureña Vidal,AmirVidal,30,2814,1552,4366,100.0,0.0,53.81,68.57,100.0,54.0
+JoseAL,JoseAL,3,1073,69,1142,42.86,100.0,23.05,17.71,100.0,51.57
+Gabriel Alejandro Moscoso Pinto,gabox-404,1,59,12,71,14.29,100.0,100.0,6.86,100.0,51.48
+josuelara,josuelara,1,29,20,49,14.29,100.0,100.0,6.86,100.0,51.48
+Anabel_Leyva_Adrian,Anabel_Leyva_Adrian,1,24,4,28,14.29,100.0,100.0,6.86,100.0,51.48
+Jose Aima Lupa,Jose Aima Lupa,1,251,0,251,14.29,100.0,100.0,6.86,100.0,51.48
+Carlos Mangudo,carlosjunior9,51,2309,1677,3986,100.0,0.0,23.06,57.14,98.04,51.36
+Vladimir Camacho Cabrera,Vlady610,92,5092,2737,7829,100.0,0.0,59.14,54.29,100.0,50.81
+Gerson Steven Fernandez Ricalde,Xu-chuu,75,10492,5154,15646,100.0,6.67,0.0,51.43,94.67,50.72
+Jose Jonatan Zambrana Escobar,JonatanZambrana,2,550,6,556,28.57,100.0,52.32,13.71,100.0,50.46
+rodrigoquispe-dev,rodrigoquispe-dev,40,600,471,1071,100.0,0.0,86.87,48.57,100.0,49.82
+Jose Aima,Jose Aima,5,139,314,453,71.43,0.0,45.45,25.71,100.0,46.86
+Jorge_Torrico,Jorge_Torrico,2,21,1,22,28.57,100.0,99.19,10.86,100.0,46.76
+Alejandra Flores Requiz,Alejandra Flores Requiz,4,572,238,810,57.14,50.0,39.3,27.43,100.0,46.67
+rickonnen,rickonnen,24,31,30,61,100.0,0.0,99.72,42.86,100.0,46.14
+Eliot Rodrigo Heredia Villanueva,unidadLK520,4,189,12,201,57.14,25.0,78.31,21.71,100.0,39.27
+Melby_Mendoza,Melby_Mendoza,3,872,368,1240,42.86,100.0,0.0,17.71,66.67,37.53
+José Alejandro Pardo Bautista,AlejandroPardoB,1,119,0,119,14.29,0.0,100.0,6.86,100.0,30.48
+oscar tarque guzman,oscar tarque guzman,1,83,34,117,14.29,0.0,100.0,6.86,100.0,30.48
+Jose Manuel Tellez Angulo,Jose Manuel Tellez Angulo,1,0,40,40,14.29,0.0,100.0,6.86,100.0,30.48
+Alison Mamani Yujra,Alison1205,4,1468,94,1562,57.14,0.0,0.0,24.57,75.0,27.22
+Melody Alejandra Gutierrez Caero,MelodyGutierrezC,1,331,260,591,14.29,0.0,100.0,6.86,100.0,23.48
+jlp,jlp,1,344,12,356,14.29,0.0,100.0,6.86,100.0,23.48
+Victor Flores,Victor Flores,1,7,3,10,14.29,0.0,100.0,6.86,100.0,0.0
+gilmer-hurtado-peralta,gilmer-hurtado-peralta,2,2,1,3,28.57,100.0,99.8,10.86,100.0,0.0
+hurtado,hurtado,2,9,0,9,28.57,100.0,98.18,10.86,100.0,0.0

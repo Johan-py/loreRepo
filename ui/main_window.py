@@ -558,30 +558,42 @@ class MainWindow(QWidget):
                             padding: 5px;
                             border: none;
                             background-color: #f0f0f0;
+                            color: #000000;  /* 🔥 esto arregla tu problema */
                         }
-                        QPushButton:hover {
+                  <      QPushButton:hover {
                             background-color: #e0e0e0;
                             text-decoration: underline;
+                            color: #000000;
                         }
                     """)
                     button.clicked.connect(lambda _, a=value: self.open_profile(a))
                     self.table.setCellWidget(row, col, button)
                 else:
                     item = QTableWidgetItem(str(value))
-                    # Colorear celdas según la puntuación de consistencia
+
                     if column_name == 'consistency_score' and pd.notna(value):
                         try:
                             score = float(value)
+
                             if score >= 80:
                                 item.setBackground(QColor(144, 238, 144))  # Verde claro
+                                item.setForeground(QColor(0, 0, 0))        # Negro
+
                             elif score >= 60:
                                 item.setBackground(QColor(255, 255, 144))  # Amarillo claro
+                                item.setForeground(QColor(0, 0, 0))
+
                             elif score >= 40:
                                 item.setBackground(QColor(255, 200, 144))  # Naranja claro
+                                item.setForeground(QColor(0, 0, 0))
+
                             else:
                                 item.setBackground(QColor(255, 160, 160))  # Rojo claro
+                                item.setForeground(QColor(0, 0, 0))
+
                         except:
                             pass
+
                     self.table.setItem(row, col, item)
 
         self.table.resizeRowsToContents()
