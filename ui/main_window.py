@@ -424,43 +424,102 @@ class MainWindow(QWidget):
     
     def on_analysis_finished(self, df):
         """Análisis completado exitosamente"""
-        self.df = df
-        
-        if self.df.empty:
+
+        # Validación básica
+        if df is None or df.empty:
+            self.df = df
             self.status_label.setText("⚠️ No se encontraron commits en el repositorio")
             self.status_label.setStyleSheet("color: red; padding: 10px; font-weight: bold;")
             self.pdf_button.setEnabled(False)
             self.devops_pdf_button.setEnabled(False)
             self.table.setRowCount(0)
+
         else:
-            self.show_table(self.df)
-            self.pdf_button.setEnabled(True)
-            self.devops_pdf_button.setEnabled(True)
-            
-            # Mostrar resumen detallado
-            total_authors = len(self.df)
-            if 'total_commits' in self.df.columns:
-                total_commits = self.df['total_commits'].sum()
-            else:
-                total_commits = len(self.df)
-            
-            # Calcular estadísticas adicionales
-            avg_consistency = self.df['consistency_score'].mean() if 'consistency_score' in self.df.columns else 0
-            high_performers = len(self.df[self.df['consistency_score'] >= 80]) if 'consistency_score' in self.df.columns else 0
-            
-            status_msg = f"✅ Análisis completado exitosamente!\n"
-            status_msg += f"📊 {total_commits:,} commits analizados\n"
-            status_msg += f"👥 {total_authors} autores encontrados\n"
-            status_msg += f"⭐ Consistencia promedio: {avg_consistency:.1f}/100\n"
-            status_msg += f"🏆 Autores destacados (≥80): {high_performers}\n"
-            
-            if self.all_commits_checkbox.isChecked():
-                status_msg += f"✨ Incluye commits de ramas eliminadas y commits huérfanos"
-            
-            self.status_label.setText(status_msg)
-            self.status_label.setStyleSheet("color: green; padding: 10px; font-weight: bold;")
-        
-        # Ocultar barra de progreso
+            try:
+                # ==============================
+                # COPIA SEGURA DEL DATAFRAME
+                # ==============================
+                self.df = df.copy()
+
+                # ==============================
+                # VALIDACIÓN DE COLUMNAS
+                # ==============================
+                if "author" not in self.df.columns:
+                    raise ValueError("El DataFrame no contiene la columna 'author'")
+
+                # ==============================
+                # MAPEO DE EQUIPOS
+                # ==============================
+                team_map = {
+                    "Johan Marcelo Beltrán Montaño": "DevOps",
+                    "Jose Jonatan Zambrana Escobar": "DevOps",
+                    "Roberto Carlos Emilio Alejo": "DevOps",
+                }
+
+                # Crear columna team
+
+                # ==============================
+                # REORDENAR COLUMNAS
+                # ==============================
+                cols = list(self.df.columns)
+
+                if "aliases" in cols and "team" in cols:
+                    cols.remove("team")
+                    aliases_index = cols.index("aliases")
+                    cols.insert(aliases_index + 1, "team")
+
+                self.df = self.df[cols]
+
+                # ==============================
+                # MOSTRAR TABLA
+                # ==============================
+                self.show_table(self.df)
+                self.pdf_button.setEnabled(True)
+                self.devops_pdf_button.setEnabled(True)
+
+                # ==============================
+                # ESTADÍSTICAS
+                # ==============================
+                total_authors = len(self.df)
+
+                if 'total_commits' in self.df.columns:
+                    total_commits = self.df['total_commits'].sum()
+                else:
+                    total_commits = len(self.df)
+
+                avg_consistency = (
+                    self.df['consistency_score'].mean()
+                    if 'consistency_score' in self.df.columns else 0
+                )
+
+                high_performers = (
+                    len(self.df[self.df['consistency_score'] >= 80])
+                    if 'consistency_score' in self.df.columns else 0
+                )
+
+                # ==============================
+                # MENSAJE FINAL
+                # ==============================
+                status_msg = f"✅ Análisis completado exitosamente!\n"
+                status_msg += f"📊 {total_commits:,} commits analizados\n"
+                status_msg += f"👥 {total_authors} autores encontrados\n"
+                status_msg += f"⭐ Consistencia promedio: {avg_consistency:.1f}/100\n"
+                status_msg += f"🏆 Autores destacados (≥80): {high_performers}\n"
+
+                if self.all_commits_checkbox.isChecked():
+                    status_msg += "✨ Incluye commits de ramas eliminadas y commits huérfanos"
+
+                self.status_label.setText(status_msg)
+                self.status_label.setStyleSheet("color: green; padding: 10px; font-weight: bold;")
+
+            except Exception as e:
+                self.status_label.setText(f"❌ Error procesando resultados: {str(e)}")
+                self.status_label.setStyleSheet("color: red; padding: 10px; font-weight: bold;")
+                QMessageBox.critical(self, "Error", str(e))
+
+        # ==============================
+        # FINALIZACIÓN UI
+        # ==============================
         self.progress_bar.setVisible(False)
         self.analyze_button.setEnabled(True)
     

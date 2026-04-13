@@ -1,77 +1,78 @@
-author,aliases,total_commits,lines_added,lines_deleted,total_lines_changed,commit_score,message_score,size_score,frequency_score,granularity_score,consistency_score
-Jofre Ticona Plata,"JOFRE TICONA PLATA, Jofre Ticona Plata",15,1014,99,1113,100.0,100.0,73.57,54.29,100.0,93.43
-Noemi Condori Gaspar,Noemi Condori Gaspar,13,580,498,1078,100.0,100.0,61.72,54.29,100.0,91.58
-Jhonatan David Quispe Perez,JhonatanDavidQuispePerez,11,376,144,520,100.0,100.0,86.08,54.29,100.0,90.88
-Alberth Fuentes Bustamante,Alberth-Std,16,1559,787,2346,100.0,100.0,47.96,60.0,100.0,90.38
-Cristhian Alba Zapata,Cristhian Alba Zapata,10,381,346,727,100.0,90.0,82.74,51.43,100.0,89.14
-Wilber Ojeda Valente,OjedaValenteWilber08,11,189,47,236,100.0,100.0,91.51,51.43,100.0,87.87
-Juan David Gutierrez Lucero,Jaodeivid,20,855,758,1613,100.0,85.0,65.91,62.86,100.0,86.79
-Giovani-Quiroz,Giovani-Quiroz,19,366,214,580,100.0,89.47,90.6,54.29,100.0,86.48
-Alberto Quispe Ramirez,"AlbertoQuispe478, AlbertoQuispe",8,392,174,566,100.0,87.5,79.21,43.43,100.0,85.59
-Calep Giovanni Patiño Lazarte,CalepP,11,250,42,292,100.0,81.82,92.96,54.29,100.0,85.43
-Tarque Guzman Oscar,Tarque Guzman Oscar,6,980,417,1397,85.71,100.0,28.73,32.57,100.0,85.4
-Madahi Angeles Aranibar Mamani,madahiangeles,10,802,57,859,100.0,80.0,72.06,51.43,100.0,85.14
-CristianEncinas014,CristianEncinas014,9,731,642,1373,100.0,88.89,32.42,44.57,100.0,84.46
-Darlyn,Darlyn,9,483,359,842,100.0,77.78,71.37,44.57,100.0,84.46
-Alex Nina Copatiti,alexnina01,17,5583,4122,9705,100.0,82.35,0.0,48.57,88.24,83.09
-Mireya Edly Rojas Reque,mireyaRojas-max,7,211,6,217,100.0,85.71,91.58,30.86,100.0,83.09
-Briza Zurita Zelada,Briza Zurita Zelada,11,453,66,519,100.0,81.82,74.45,54.29,100.0,82.7
-Jhilmer Chinchilla Condori,Jhilmer Chinchilla Condori,8,610,450,1060,100.0,75.0,62.33,40.57,100.0,81.56
-isra-jq,isra-jq,6,394,192,586,85.71,66.67,80.89,35.43,100.0,80.69
-Ninel Daniela Alcocer Zabala,Ninel-A,11,5546,4641,10187,100.0,81.82,0.0,51.43,90.91,78.78
-Shawn brandon,Shawn brandon,7,558,552,1110,100.0,57.14,40.48,39.43,100.0,78.23
-Joel Ariel Llusco Acho,PanaShusco,26,2975,1224,4199,100.0,88.46,53.1,65.71,100.0,76.85
-Alejandro Amaru Condori Morales,aacm592,21,430,226,656,100.0,100.0,86.82,62.86,100.0,76.58
-Wilber_Lancea,Wilber_Lancea,10,1630,667,2297,100.0,50.0,26.08,54.29,100.0,76.43
-Alex Choque Ajata,Alex,18,401,164,565,100.0,50.0,90.52,62.86,100.0,76.29
-Adrian Perez Tapia,Parche,13,538,52,590,100.0,53.85,84.21,54.29,100.0,76.2
-Yuri Daniel Ayaviri Quispe,j0jii,8,2260,1963,4223,100.0,62.5,0.0,46.29,87.5,75.88
-Rodrigo Figueroa Camacho,Rodrigo Figueroa Camacho,18,781,365,1146,100.0,50.0,77.26,51.43,100.0,75.7
-Joaquin Octavio Tapia Vera,Joaquin Octavio Tapia Vera,22,3469,2030,5499,100.0,95.45,0.0,57.14,95.45,75.18
-Jorge_Paniagua,Jorge_Paniagua,72,5868,2645,8513,100.0,90.28,0.0,65.71,97.22,73.23
-Johan Marcelo Beltrán Montaño,"Johan b., Johan Marcelo Beltrán Montaño, Johan-py",62,2882,7755,10637,100.0,93.55,0.0,60.0,93.55,72.96
-Miguel Angel Massi Geronimo,Miguel Angel Massi Geronimo,30,11859,13283,25142,100.0,86.67,0.0,60.0,90.0,72.25
-Esther Romero Menacho,"Esther Romero Menacho, Esther2419",28,1191,1049,2240,100.0,71.43,56.64,54.29,100.0,70.49
-Fernandez Velasco Jhon Aldo,gruezomen,29,2965,1993,4958,100.0,72.41,0.0,60.0,96.55,67.82
-Lia Cardenas,Lia Cardenas,8,2140,2350,4490,100.0,50.0,0.0,46.29,87.5,67.13
-Luis Huanca Mamani,Luis Huanca Mamani,12,2334,1565,3899,100.0,50.0,0.0,54.29,83.33,67.1
-mariela chamo,mariela chamo,14,1031,79,1110,100.0,28.57,55.99,51.43,100.0,66.57
-Manuel Tellez,Manuel Tellez,13,616,1987,2603,100.0,30.77,0.0,57.14,92.31,64.18
-Neida Zeballos Tejada,Neidazeballostejada,19,1301,475,1776,100.0,0.0,74.72,57.14,100.0,63.08
-Jhoel Andrés Zeballos Romero,JHOEL ANDRES ZEBALLOS ROMERO,6,537,282,819,85.71,16.67,64.87,29.71,100.0,61.78
-Carlos Josue Vasquez Huanca,vasquezhuancacarlos,9,274,185,459,100.0,0.0,81.45,47.43,100.0,61.41
-Jhonn Pablo Calsina Soto,Jhonn Pablo Calsina Soto,14,146,919,1065,100.0,21.43,30.49,45.71,100.0,61.0
-Mauricio Pinto Salazar,Mauricio Pinto Salazar,13,8773,6873,15646,100.0,23.08,0.0,42.86,92.31,60.44
-MadahiCondori,MadahiCondori,33,1071,304,1375,100.0,27.27,84.41,65.71,100.0,59.68
-felipe,felipe,21,2821,1636,4457,100.0,38.1,1.71,65.71,95.24,59.42
-Eduardo Francisco Kilibarda Lima,FranciscoKilibarda,25,2214,1254,3468,100.0,24.0,46.68,62.86,100.0,59.06
-Gonzalo Ayra Torrico,gonzalo-ayra,9,710,180,890,100.0,0.0,45.9,44.57,100.0,58.9
-Jose Adrian Villazon Rojas,Jose,8,98,20,118,100.0,0.0,94.9,37.71,100.0,57.52
-William Vela Uribe,William-Vela-Uribe,6,56,53,109,85.71,0.0,93.87,38.29,100.0,55.97
-Javier Gustavo Corrales Delgadillo,Javier Gustavo Corrales Delgadillo,11,2720,1845,4565,100.0,0.0,0.0,48.57,90.91,55.77
-Amir Asaith Ureña Vidal,AmirVidal,30,2814,1552,4366,100.0,0.0,53.81,68.57,100.0,54.0
-JoseAL,JoseAL,3,1073,69,1142,42.86,100.0,23.05,17.71,100.0,51.57
-Gabriel Alejandro Moscoso Pinto,gabox-404,1,59,12,71,14.29,100.0,100.0,6.86,100.0,51.48
-josuelara,josuelara,1,29,20,49,14.29,100.0,100.0,6.86,100.0,51.48
-Anabel_Leyva_Adrian,Anabel_Leyva_Adrian,1,24,4,28,14.29,100.0,100.0,6.86,100.0,51.48
-Jose Aima Lupa,Jose Aima Lupa,1,251,0,251,14.29,100.0,100.0,6.86,100.0,51.48
-Carlos Mangudo,carlosjunior9,51,2309,1677,3986,100.0,0.0,23.06,57.14,98.04,51.36
-Vladimir Camacho Cabrera,Vlady610,92,5092,2737,7829,100.0,0.0,59.14,54.29,100.0,50.81
-Gerson Steven Fernandez Ricalde,Xu-chuu,75,10492,5154,15646,100.0,6.67,0.0,51.43,94.67,50.72
-Jose Jonatan Zambrana Escobar,JonatanZambrana,2,550,6,556,28.57,100.0,52.32,13.71,100.0,50.46
-rodrigoquispe-dev,rodrigoquispe-dev,40,600,471,1071,100.0,0.0,86.87,48.57,100.0,49.82
-Jose Aima,Jose Aima,5,139,314,453,71.43,0.0,45.45,25.71,100.0,46.86
-Jorge_Torrico,Jorge_Torrico,2,21,1,22,28.57,100.0,99.19,10.86,100.0,46.76
-Alejandra Flores Requiz,Alejandra Flores Requiz,4,572,238,810,57.14,50.0,39.3,27.43,100.0,46.67
-rickonnen,rickonnen,24,31,30,61,100.0,0.0,99.72,42.86,100.0,46.14
-Eliot Rodrigo Heredia Villanueva,unidadLK520,4,189,12,201,57.14,25.0,78.31,21.71,100.0,39.27
-Melby_Mendoza,Melby_Mendoza,3,872,368,1240,42.86,100.0,0.0,17.71,66.67,37.53
-José Alejandro Pardo Bautista,AlejandroPardoB,1,119,0,119,14.29,0.0,100.0,6.86,100.0,30.48
-oscar tarque guzman,oscar tarque guzman,1,83,34,117,14.29,0.0,100.0,6.86,100.0,30.48
-Jose Manuel Tellez Angulo,Jose Manuel Tellez Angulo,1,0,40,40,14.29,0.0,100.0,6.86,100.0,30.48
-Alison Mamani Yujra,Alison1205,4,1468,94,1562,57.14,0.0,0.0,24.57,75.0,27.22
-Melody Alejandra Gutierrez Caero,MelodyGutierrezC,1,331,260,591,14.29,0.0,100.0,6.86,100.0,23.48
-jlp,jlp,1,344,12,356,14.29,0.0,100.0,6.86,100.0,23.48
-Victor Flores,Victor Flores,1,7,3,10,14.29,0.0,100.0,6.86,100.0,0.0
-gilmer-hurtado-peralta,gilmer-hurtado-peralta,2,2,1,3,28.57,100.0,99.8,10.86,100.0,0.0
-hurtado,hurtado,2,9,0,9,28.57,100.0,98.18,10.86,100.0,0.0
+author,team,aliases,total_commits,lines_added,lines_deleted,total_lines_changed,commit_score,message_score,size_score,frequency_score,granularity_score,consistency_score
+Jofre Ticona Plata,Sigma Developers,"JOFRE TICONA PLATA, Jofre Ticona Plata",13,774,98,872,100.0,100.0,71.11,57.14,100.0,91.87
+Noemi Soledad Condori Gaspar,La comarca de IS,Noemi Condori Gaspar,17,632,512,1144,100.0,100.0,65.73,60.0,100.0,91.29
+Jhonatan David Quispe Perez,La comarca de IS,JhonatanDavidQuispePerez,12,385,144,529,100.0,100.0,86.36,57.14,100.0,90.71
+Wilber Ojeda Valente,Prisma,OjedaValenteWilber08,17,286,78,364,100.0,100.0,92.62,57.14,100.0,89.24
+Cristhian Alba Zapata,BitPro,Cristhian Alba Zapata,10,381,346,727,100.0,90.0,82.74,51.43,100.0,89.14
+Alberth Fuentes Bustamante,La comarca de IS,"Alberth-Std, Alberth Fuentes Bustamante",17,1568,787,2355,100.0,94.12,48.72,62.86,100.0,88.64
+Giovani Quiroz Quiroz,ByteMafia,Giovani-Quiroz,20,376,214,590,100.0,90.0,90.76,57.14,100.0,86.71
+Briza Zurita Zelada,ByteMafia,"Briza Zurita Zelada, brizabelzz",12,432,59,491,100.0,91.67,75.36,57.14,100.0,84.88
+Mireya Edly Rojas Reque,ByteMafia,mireyaRojas-max,9,225,11,236,100.0,88.89,92.22,41.71,100.0,84.17
+Alberto Quispe Ramirez,Sigma Developers,AlbertoQuispe478,7,237,161,398,100.0,85.71,81.1,36.57,100.0,83.66
+Gilmer Hurtado Peralta,Prisma,gilmer-hurtado-peralta,5,98,44,142,71.43,100.0,92.82,25.71,100.0,82.86
+Israel Jimenez Quinteros,ByteMafia,isra-jq,6,394,192,586,85.71,66.67,80.89,35.43,100.0,80.69
+Jhilmer Chinchilla Condori,BitPro,Jhilmer Chinchilla Condori,10,627,469,1096,100.0,60.0,63.94,51.43,100.0,78.14
+Alejandro Amaru Condori Morales,Prisma,aacm592,34,1019,615,1634,100.0,100.0,77.72,68.57,100.0,77.83
+Luz Alejandra Flores Requiz,Commit Crew,Alejandra Flores Requiz,6,1034,801,1835,85.71,66.67,0.0,38.29,100.0,77.64
+Shawn Brandon Bellido Zeballos,ByteMafia,Shawn brandon,6,425,476,901,85.71,66.67,33.05,32.57,100.0,77.07
+Rodrigo Figueroa Camacho,BitPro,Rodrigo Figueroa Camacho,14,8599,206,8805,100.0,64.29,0.0,51.43,92.86,76.57
+Ninel Daniela Alcocer Zabala,BitPro,Ninel-A,9,4953,4411,9364,100.0,77.78,0.0,47.43,88.89,75.85
+Joel Ariel Llusco Acho,La comarca de IS,PanaShusco,28,4246,1984,6230,100.0,85.71,0.0,71.43,96.43,75.29
+Lia Cardenas Morales,BitPro,Lia Cardenas,13,2166,2348,4514,100.0,69.23,0.0,54.29,92.31,74.66
+Joaquin Octavio Tapia Vera,Prisma,Joaquin Octavio Tapia Vera,46,5205,3599,8804,100.0,84.78,26.08,62.86,97.83,74.64
+Calep Giovanni Patiño Lazarte,Prisma,CalepP,28,279,47,326,100.0,92.86,94.46,62.86,100.0,73.34
+Johan Marcelo Beltrán Montaño,DevOpsCore,"Johan b., Johan Marcelo Beltrán Montaño, Johan-py",96,13315,12483,25798,100.0,88.54,0.0,80.0,93.75,73.29
+Jorge Luis Paniagua Mendoza,BitPro,Jorge_Paniagua,78,12360,8452,20812,100.0,89.74,0.0,68.57,96.15,73.28
+Esther Romero Menacho,ByteMafia,"Esther Romero Menacho, Esther2419",31,1079,1008,2087,100.0,74.19,59.36,62.86,100.0,71.7
+Jhoel Andrés Zeballos Romero,ByteMafia,JHOEL ANDRES ZEBALLOS ROMERO,11,562,287,849,100.0,36.36,68.42,57.14,100.0,70.26
+Juan David Gutierrez Lucero,La comarca de IS,"Jaodeivid, JUAN DAVID GUTIERREZ LUCERO",25,896,796,1692,100.0,68.0,68.6,68.57,100.0,69.41
+Miguel Angel Massi Geronimo,ByteMafia,Miguel Angel Massi Geronimo,35,10358,1482,11840,100.0,71.43,0.0,60.0,94.29,69.21
+Fernandez Velasco Jhon Aldo,La comarca de IS,gruezomen,30,2975,1993,4968,100.0,73.33,0.0,62.86,96.67,68.24
+Mariela Chamo Paco,Sigma Developers,mariela chamo,14,1031,79,1110,100.0,28.57,55.99,51.43,100.0,66.57
+Eliot Rodrigo Heredia Villanueva,ByteMafia,"unidadLK520, Eliot Rodrigo Heredia Villanueva",10,206,18,224,100.0,30.0,85.7,51.43,100.0,66.14
+Adrian Perez Tapia,ByteMafia,Parche,22,694,111,805,100.0,54.55,86.8,62.86,100.0,65.23
+Jose Jonatan Zambrana Escobar,DevOpsCore,JonatanZambrana,22,20493,630,21123,100.0,68.18,0.0,57.14,86.36,63.97
+Jose Manuel Tellez Angulo,Cebollita,"Manuel Tellez, Jose Manuel Tellez Angulo",19,795,2209,3004,100.0,21.05,0.0,57.14,94.74,63.61
+John Pablo Calsina Soto,Prisma,Jhonn Pablo Calsina Soto,16,205,280,485,100.0,18.75,79.57,48.57,100.0,61.73
+Carlos Josue Vasquez Huanca,La comarca de IS,vasquezhuancacarlos,8,119,185,304,100.0,0.0,85.21,46.29,100.0,60.88
+Alex Nina Copatiti,Prisma,"Alex Choque Ajata, Alex",34,2272,1997,4269,100.0,44.12,5.38,77.14,91.18,60.81
+Mauricio Pinto Salazar,Cebollita,Mauricio Pinto Salazar,13,8773,6873,15646,100.0,23.08,0.0,42.86,92.31,60.44
+Madahi Karen Condori Perez,Sigma Developers,MadahiCondori,34,1080,304,1384,100.0,29.41,84.56,68.57,100.0,60.33
+Leyton Ludwin Felipe Rivera,Commit Crew,felipe,22,11131,1834,12965,100.0,40.91,0.0,68.57,90.91,59.15
+Eduardo Francisco Kilibarda Lima,La comarca de IS,FranciscoKilibarda,26,2224,1254,3478,100.0,23.08,47.26,65.71,100.0,58.87
+Gonzalo Ayra Torrico,Cebollita,gonzalo-ayra,11,728,180,908,100.0,0.0,50.51,51.43,100.0,58.78
+Amir Asaith Ureña Vidal,La comarca de IS,AmirVidal,40,4267,3016,7283,100.0,12.5,37.17,80.0,100.0,58.22
+Jose Aima lupa,Sigma Developers,"Jose Aima, Jose Aima Lupa",6,390,314,704,85.71,16.67,47.75,32.57,100.0,57.07
+Jose,Sin equipo,Jose,7,87,18,105,100.0,0.0,94.69,33.71,100.0,56.23
+Darlyn Alejandra Veliz Mamani,BitPro,Darlyn,4,509,288,797,57.14,100.0,33.42,21.71,100.0,55.02
+Gabox-404,Sin equipo,gabox-404,2,68,23,91,28.57,100.0,89.7,13.71,100.0,53.96
+Melby Kelym Mendoza Mamani,BitPro,Melby_Mendoza,3,144,87,231,42.86,100.0,80.28,17.71,100.0,53.91
+Neida Zeballos Tejada,Sigma Developers,Neidazeballostejada,22,1317,483,1800,100.0,0.0,75.07,60.0,100.0,53.01
+Gerson Steven Fernandez Ricalde,Cebollita,Xu-chuu,81,10517,5174,15691,100.0,11.11,0.0,54.29,95.06,52.05
+Rodrigo Quispe Vargas,Cebollita,"rodrigoquispe-dev, Rodrigo Quispe",44,16745,2830,19575,100.0,9.09,0.0,54.29,97.73,51.75
+Joseal,Sin equipo,JoseAL,3,1073,69,1142,42.86,100.0,23.05,17.71,100.0,51.57
+Albertoquispe,Sin equipo,AlbertoQuispe,1,155,13,168,14.29,100.0,100.0,6.86,100.0,51.48
+Jorge Paniagua,Sin equipo,Jorge Paniagua,1,122,0,122,14.29,100.0,100.0,6.86,100.0,51.48
+Josue Lara Paqui,La comarca de IS,josuelara,1,29,20,49,14.29,100.0,100.0,6.86,100.0,51.48
+Vladimir Camacho Cabrera,Cebollita,"Vlady610, Vladimir Camacho Cabrera",80,3669,9950,13619,100.0,0.0,0.0,57.14,98.75,50.54
+Anabel_Leyva_Adrian,Sin equipo,Anabel_Leyva_Adrian,2,13,13,26,28.57,100.0,97.17,10.86,100.0,50.26
+Wilber Lancea Mamani,Sin equipo,WILBER LANCEA MAMANI,3,28,0,28,42.86,100.0,99.84,17.71,100.0,49.24
+Joséal,Sin equipo,JoséAL,3,16,7,23,42.86,100.0,98.53,14.86,100.0,49.04
+Rickonnen,Sin equipo,rickonnen,25,53,30,83,100.0,0.0,98.86,45.71,100.0,46.73
+Madahi Angeles Aranibar Mamani,BitPro,madahiangeles,3,31,26,57,42.86,66.67,94.71,20.57,100.0,44.77
+Yuri Daniel Ayaviri Quispe,Commit Crew,j0jii,4,1916,1827,3743,57.14,75.0,0.0,24.57,75.0,44.72
+Jorge_Torrico,Sin equipo,Jorge_Torrico,3,31,4,35,42.86,66.67,99.34,17.71,100.0,42.24
+Tu Nombre,Sin equipo,Tu Nombre,2,18,3,21,28.57,50.0,99.39,13.71,100.0,36.46
+Melody Alejandra Gutierrez Caero,Cebollita,MelodyGutierrezC,2,340,260,600,28.57,50.0,0.0,13.71,100.0,36.46
+Carlos Mangudo,Cebollita,carlosjunior9,4,321,89,410,57.14,0.0,72.93,21.71,100.0,35.77
+William Vela Uribe,Commit Crew,William-Vela-Uribe,3,40,34,74,42.86,0.0,92.2,20.57,100.0,33.11
+Joel Fernando Vera Orellana,Sigma Developers,J03L5009,3,19,11,30,42.86,0.0,96.99,17.71,100.0,30.57
+202000706-Star,Sin equipo,202000706-star,1,9,12,21,14.29,0.0,100.0,6.86,100.0,30.48
+Jlp,Sin equipo,jlp,1,344,12,356,14.29,0.0,100.0,6.86,100.0,23.48
+Gustavo Corrales,Sin equipo,Gustavo Corrales,2,19,0,19,28.57,0.0,99.8,10.86,100.0,0.0
+Hurtado,Sin equipo,hurtado,2,9,0,9,28.57,100.0,98.18,10.86,100.0,0.0
+Israel-Jq,Sin equipo,israel-jq,1,11,1,12,14.29,0.0,100.0,6.86,100.0,0.0
+Cristian Encinas Caceres ,Sigma Developers,CristianEncinas014,1,9,0,9,14.29,100.0,100.0,6.86,100.0,0.0
+José Alejandro Pardo Bautista,Cebollita,AlejandroPardoB,2,9,0,9,28.57,100.0,98.18,10.86,100.0,0.0
+Victor David Flores Colque,Commit Crew,Victor Flores,1,7,3,10,14.29,0.0,100.0,6.86,100.0,0.0
+X,Sin equipo,x,1,9,0,9,14.29,100.0,100.0,6.86,100.0,0.0

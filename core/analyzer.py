@@ -36,7 +36,7 @@ def normalize_text(text):
 def compute_commit_score(total_commits):
     if IDEAL_MIN_COMMITS <= total_commits <= IDEAL_MAX_COMMITS:
         return 100
-
+   
     if total_commits < IDEAL_MIN_COMMITS:
         return clamp(100 * (total_commits / IDEAL_MIN_COMMITS))
 
@@ -312,68 +312,62 @@ def get_total_commit_count(branches=None):
 def load_user_mapping(path="data/users.csv"):
     df_users = pd.read_csv(path)
 
-    df_users = df_users.dropna(subset=["nombre_completo", "github_username"])
+    df_users = df_users.dropna(subset=[
+        "nombre_completo",
+        "github_user_name",
+        "nombre_equipo"
+    ])
+
     df_users["nombre_norm"] = df_users["nombre_completo"].apply(normalize_text)
-    df_users["user_norm"] = df_users["github_username"].apply(normalize_text)
+    df_users["user_norm"] = df_users["github_user_name"].apply(normalize_text)
+    df_users["equipo"] = df_users["nombre_equipo"]
 
     return df_users
-
-
 # ===============================
 # 🔄 NORMALIZAR AUTORES
 # ===============================
 def normalize_authors(df, df_users):
     df["author_raw"] = df["author"]
     df["author_norm"] = df["author"].apply(normalize_text)
+    df["email_norm"] = df["email"].apply(normalize_text)
 
+    # mappings correctos
     mapping_user = dict(zip(df_users["user_norm"], df_users["nombre_completo"]))
     mapping_name = dict(zip(df_users["nombre_norm"], df_users["nombre_completo"]))
-
-    ALIASES = {
-        "parche": "Adrian Perez Tapia",
-        "alex": "Alex Choque Ajata",
-        "jose": "Jose Adrian Villazon Rojas",
-        "Tu Nombre": "Shawn Brandon Bellido Zeballos"
-    }
+    mapping_team = dict(zip(df_users["nombre_completo"], df_users["equipo"]))
 
     def resolve_display(author, email):
         a = normalize_text(author)
         e = normalize_text(email)
 
+        # limpiar emails tipo user+alias@github.com
         e = re.sub(r".*\+", "", e)
 
-        if a in ALIASES:
-            return ALIASES[a]
-
+        # match por username
         if a in mapping_user:
             return mapping_user[a]
 
+        # match por email
         for user in mapping_user:
-            if re.search(rf"\b{re.escape(user)}\b", e):
+            if user in e:
                 return mapping_user[user]
 
+        # match por nombre
         if a in mapping_name:
             return mapping_name[a]
 
-        for user in mapping_user:
-            if user in a:
-                return mapping_user[user]
-
-        for name in mapping_name:
-            if name in a:
-                return mapping_name[name]
-
-        print(f"[WARN] Autor no mapeado: {author} | {email}")
-        return author
+        # fallback
+        return author.title()
 
     df["display_name"] = df.apply(
         lambda row: resolve_display(row["author"], row["email"]),
         axis=1
     )
 
+    # 🔥 NUEVO: asignar equipo
+    df["team"] = df["display_name"].map(mapping_team).fillna("Sin equipo")
+
     return df
-
-
 # ===============================
 # 🧠 CALCULAR CONSISTENCIA
 # ===============================
@@ -440,7 +434,7 @@ def compute_consistency(df):
         commit_score = compute_commit_score(total_commits)
 
         # =========================
-        # 🧠 SCORE FINAL (MEJORADO)
+        # 🧠 SCORE FINAL
         # =========================
         consistency_score = clamp(
             0.20 * commit_score +
@@ -464,9 +458,10 @@ def compute_consistency(df):
 
         if total_lines < MIN_LINES_THRESHOLD:
             consistency_score = 0
-
+        team = data["team"].iloc[0] if "team" in data.columns else "Sin equipo"
         report.append({
             "author": author,
+            "team": team,
             "aliases": ", ".join(data["author_raw"].unique()),
             "total_commits": int(total_commits),
             "lines_added": int(total_added),
@@ -543,7 +538,18 @@ def run_analysis(repo_url, since=None, until=None, branches=None, include_all_hi
 
     # Calcular consistencia
     report = compute_consistency(df)
+    # ===============================
+    # 📊 SCORE POR EQUIPO
+    # ===============================
+    if not report.empty and "team" in report.columns:
+        team_summary = report.groupby("team")["consistency_score"].mean().reset_index()
 
+        print("\n--- SCORE POR EQUIPO ---")
+        print(team_summary.sort_values(by="consistency_score", ascending=False))
+
+    # Guardar resultados
+    os.makedirs("data", exist_ok=True)
+    report.to_csv("data/author_consistency_report.csv", index=False)
     # Guardar resultados
     os.makedirs("data", exist_ok=True)
     report.to_csv("data/author_consistency_report.csv", index=False)
@@ -625,7 +631,11 @@ def run_full_history_analysis(repo_url, branches=None, batch_size=1000):
     print(df[["author", "display_name"]].drop_duplicates().head(20))
     
     report = compute_consistency(df)
-    
+    if not report.empty and "team" in report.columns:
+        team_summary = report.groupby("team")["consistency_score"].mean().reset_index()
+
+        print("\n--- SCORE POR EQUIPO ---")
+        print(team_summary.sort_values(by="consistency_score", ascending=False))
     os.makedirs("data", exist_ok=True)
     report.to_csv("data/author_consistency_report_full_history.csv", index=False)
     

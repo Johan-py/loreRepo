@@ -8,6 +8,7 @@ import pandas as pd
 import os
 from datetime import datetime
 
+
 def generate_devops_pdf(csv_path="data/author_consistency_report.csv",
                         output_path="data/devops_report.pdf",
                         since=None,
@@ -15,338 +16,171 @@ def generate_devops_pdf(csv_path="data/author_consistency_report.csv",
                         branches=None,
                         devops_authors=None,
                         tasks_config=None):
-    """
-    Genera un PDF únicamente con los autores DevOps excluidos del ranking principal.
-    - Incluye autores aunque no tengan commits.
-    - Tareas se asignan individualmente y Puntuacion depende del número de tareas completadas.
-    
-    Args:
-        csv_path: Ruta al archivo CSV con los datos
-        output_path: Ruta donde guardar el PDF
-        since: Fecha inicial (YYYY-MM-DD)
-        until: Fecha final (YYYY-MM-DD)
-        branches: Ramas analizadas (string o lista)
-        devops_authors: Lista de autores DevOps
-        tasks_config: Configuración de tareas por autor
-    """
-    
-    # Configuración de autores por defecto
+
+    # ===============================
+    # AUTORES
+    # ===============================
     if devops_authors is None:
         devops_authors = [
             "Johan Marcelo Beltrán Montaño",
             "Jose Jonatan Zambrana Escobar",
             "Roberto Carlos Emilio Alejo"
         ]
-    
-    # Configuración de tareas por autor (dict con formato "completadas/total")
+
+    # ===============================
+    # TAREAS CON % Y SCORE
+    # ===============================
     if tasks_config is None:
         tasks_config = {
-            "Johan Marcelo Beltrán Montaño": "4/4",
-            "Jose Jonatan Zambrana Escobar": "3/3",
-            "Roberto Carlos Emilio Alejo": "1/1"
+            "Johan Marcelo Beltrán Montaño": [
+                {"title": "CI/CD", "desc": "Pipeline GitHub Actions", "progress": 100, "score": 20},
+                {"title": "Deploy", "desc": "Vercel + Render", "progress": 60, "score": 20},
+                {"title": "Soporte", "desc": "107/115 incidentes (~93%)", "progress": 93, "score": 30},
+                {"title": "Asistencia", "desc": "Cobertura 74%", "progress": 74, "score": 10},
+                {"title": "Automatización", "desc": "Scripts DevOps", "progress": 100, "score": 20},
+                {"title": "Review", "desc": "Presentacion review", "progress": 95, "score": 30},
+
+            ],
+            "Jose Jonatan Zambrana Escobar": [
+                {"title": "DB", "desc": "Diseño y setup", "progress": 100, "score": 30},
+                {"title": "Soporte DB", "desc": "Asistencia equipos", "progress": 50.9, "score": 20},
+                {"title": "Testing", "desc": "Tests backend", "progress": 20, "score": 25},
+                {"title": "Monitoring", "desc": "Monitoreo backend", "progress": 20, "score": 25},
+                {"title": "Review", "desc": "Presentacion review", "progress": 95, "score": 30},
+
+            ],
+            "Roberto Carlos Emilio Alejo": [
+                {"title": "Monitoreo repo", "desc": "Supervisión continua", "progress": 20, "score": 30},
+                {"title": "Incidentes críticos", "desc": "Soporte conflictos", "progress": 70, "score": 40},
+                {"title": "Control PRs", "desc": "Validación estándares", "progress": 15, "score": 30},
+                {"title": "Review", "desc": "Presentacion review", "progress": 95, "score": 30},
+
+            ]
         }
 
-    # Crear DataFrame vacío si CSV no existe o está vacío
+    # ===============================
+    # DATA
+    # ===============================
     if not os.path.exists(csv_path) or os.path.getsize(csv_path) == 0:
-        df = pd.DataFrame(columns=["author","total_commits","total_lines_changed","message_score","size_score","frequency_score","granularity_score"])
+        df = pd.DataFrame(columns=["author", "total_commits", "total_lines_changed"])
     else:
         df = pd.read_csv(csv_path, encoding="utf-8")
 
-    # Preparar PDF
-    doc = SimpleDocTemplate(output_path, pagesize=letter,
-                           rightMargin=30, leftMargin=30,
-                           topMargin=30, bottomMargin=30)
+    # ===============================
+    # PDF SETUP
+    # ===============================
+    doc = SimpleDocTemplate(output_path, pagesize=letter)
     styles = getSampleStyleSheet()
-    
-    # Crear estilos personalizados
+
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Title'],
-        fontSize=16,
         alignment=TA_CENTER,
-        spaceAfter=20,
-        textColor=colors.HexColor('#FF9800')
+        textColor=colors.orange
     )
-    
+
     elements = []
 
     # ===============================
-    # TÍTULO E INFORMACIÓN
+    # HEADER
     # ===============================
-    try:
-        title = Paragraph("Reporte Equipo DevOps", title_style)
-        elements.append(title)
-        elements.append(Spacer(1, 12))
-    except:
-        elements.append(Paragraph("Reporte Equipo DevOps", styles["Title"]))
-        elements.append(Spacer(1, 12))
-    
-    # Información del análisis
-    try:
-        info_lines = []
-        
-        # Fechas
-        if since and until:
-            info_lines.append(f"Rango de fechas: {since} → {until}")
-        elif since:
-            info_lines.append(f"Desde: {since} → Actual")
-        elif until:
-            info_lines.append(f"Hasta: {until}")
-        else:
-            info_lines.append("Rango: TODO el historial")
-        
-        # Ramas analizadas
-        if branches:
-            if isinstance(branches, list):
-                branches_str = ", ".join(branches)
-            else:
-                branches_str = branches
-            info_lines.append(f"Ramas analizadas: {branches_str}")
-        
-        # Fecha de generación
-        info_lines.append(f"Generado: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        
-        for line in info_lines:
-            elements.append(Paragraph(line, styles["Normal"]))
-            elements.append(Spacer(1, 4))
-        
-        elements.append(Spacer(1, 6))
-    except Exception as e:
-        print(f"⚠️ Error en información: {e}")
+    elements.append(Paragraph("Reporte DevOps", title_style))
+    elements.append(Spacer(1, 12))
+
+    elements.append(Paragraph(f"Generado: {datetime.now()}", styles["Normal"]))
+    elements.append(Spacer(1, 10))
 
     # ===============================
-    # ESTADÍSTICAS DEL EQUIPO
+    # TABLA PRINCIPAL
     # ===============================
-    try:
-        elements.append(Paragraph("Estadísticas del Equipo", styles["Heading3"]))
-        elements.append(Spacer(1, 8))
-        
-        # Calcular estadísticas solo para autores DevOps que están en el CSV
-        devops_data = []
-        total_devops_commits = 0
-        total_devops_lines = 0
-        
-        for author in devops_authors:
-            if "author" in df.columns:
-                author_match = df[df['author'].str.strip().str.lower() == author.lower()]
-                if not author_match.empty:
-                    row = author_match.iloc[0]
-                    commits = int(row.get('total_commits', 0))
-                    lines = int(row.get('total_lines_changed', 0))
-                    total_devops_commits += commits
-                    total_devops_lines += lines
-                    devops_data.append({
-                        'author': author,
-                        'commits': commits,
-                        'lines': lines,
-                    })
-        
-        if devops_data:
-            
-            stats_data = []
-            stats_data.append(["Métrica", "Valor"])
-            stats_data.append(["Miembros del equipo", f"{len(devops_authors)}"])
-            stats_data.append(["Total de commits", f"{total_devops_commits:,}"])
-            stats_data.append(["Total de líneas cambiadas", f"{total_devops_lines:,}"])
-            
-            stats_table = Table(stats_data, colWidths=[150, 150])
-            stats_table.setStyle(TableStyle([
-                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor('#FF9800')),
-                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-                ("ALIGN", (1, 1), (1, -1), "RIGHT"),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-                ("TOPPADDING", (0, 0), (-1, -1), 6),
-                ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
-                ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
-            ]))
-            
-            elements.append(stats_table)
-            elements.append(Spacer(1, 15))
-    except Exception as e:
-        print(f"⚠️ Error en estadísticas: {e}")
+    data = [["Autor", "Commits", "Líneas", "Score"]]
 
-    # ===============================
-    # TABLA DE EVALUACIÓN
-    # ===============================
-    try:
-        elements.append(Paragraph("Evaluación de Tareas por Autor", styles["Heading3"]))
-        elements.append(Spacer(1, 8))
+    for author in devops_authors:
+        commits = 0
+        lines = 0
 
-        # Definir columnas (SIN columna de consistencia)
-        columns = ["Autor", "Commits", "Líneas", "Tareas", "Puntuación"]
-        data = [columns]
+        if "author" in df.columns:
+            match = df[df['author'].str.lower().str.strip() == author.lower()]
+            if not match.empty:
+                row = match.iloc[0]
+                commits = int(row.get("total_commits", 0))
+                lines = int(row.get("total_lines_changed", 0))
 
-        for author in devops_authors:
-            # Datos por defecto
-            commits = 0
-            lines = 0
+        tasks = tasks_config.get(author, [])
 
-            # Buscar datos en CSV (si existe)
-            if "author" in df.columns:
-                # Buscar coincidencia exacta o parcial
-                author_match = df[df['author'].str.strip().str.lower() == author.lower()]
-                if not author_match.empty:
-                    row = author_match.iloc[0]
-                    commits = int(row.get('total_commits', 0))
-                    lines = int(row.get('total_lines_changed', 0))
+        total_weight = sum(t.get("score", 0) for t in tasks)
+        weighted_score = sum((t.get("progress", 0) * t.get("score", 0)) for t in tasks)
 
-            # Obtener tareas para este autor
-            tareas = tasks_config.get(author, "0/0")
-            
-            # Calcular puntuación basada en tareas completadas
-            try:
-                done, total = map(int, tareas.split("/"))
-                if total > 0:
-                    task_score = int((done / total) * 100)
-                else:
-                    task_score = 0
-            except:
-                task_score = 0
-                tareas = "0/0"
+        final_score = int(weighted_score / total_weight) if total_weight > 0 else 0
 
-            data.append([
-                html.escape(author),
-                f"{commits:,}",
-                f"{lines:,}",
-                tareas,
-                f"{task_score}"
-            ])
+        data.append([
+            html.escape(author),
+            f"{commits:,}",
+            f"{lines:,}",
+            f"{final_score}"
+        ])
 
-        # Crear tabla
-        col_widths = [180, 60, 70, 60, 70]
-        table = LongTable(data, repeatRows=1, colWidths=col_widths)
-        
-        table_style = [
-            ("BACKGROUND", (0,0), (-1,0), colors.HexColor('#FF9800')),
-            ("TEXTCOLOR", (0,0), (-1,0), colors.white),
-            ("ALIGN", (0,0), (-1,0), "CENTER"),
-            ("ALIGN", (1,1), (-1,-1), "CENTER"),
-            ("ALIGN", (0,1), (0,-1), "LEFT"),
-            ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
-            ("FONTSIZE", (0,0), (-1,0), 10),
-            ("BOTTOMPADDING", (0,0), (-1,-1), 6),
-            ("TOPPADDING", (0,0), (-1,-1), 6),
-            ("GRID", (0,0), (-1,-1), 0.5, colors.black),
-            ("FONTSIZE", (0,1), (-1,-1), 9),
-        ]
-        
-        # Colorear filas según puntuación de tareas
-        for i, row in enumerate(data[1:], start=1):
-            try:
-                score = float(row[4])
-                if score >= 80:
-                    bg = colors.lightgreen
-                elif score >= 60:
-                    bg = colors.khaki
-                elif score >= 40:
-                    bg = colors.orange
-                else:
-                    bg = colors.salmon
-                table_style.append(("BACKGROUND", (4, i), (4, i), bg))
-            except:
-                pass
-        
-        table.setStyle(TableStyle(table_style))
-        elements.append(table)
-    except Exception as e:
-        print(f"⚠️ Error en tabla: {e}")
+    table = LongTable(data, repeatRows=1)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.orange),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+    ]))
+
+    elements.append(table)
 
     # ===============================
     # DETALLE DE TAREAS
     # ===============================
-    try:
-        elements.append(Spacer(1, 20))
-        elements.append(Paragraph("Detalle de Tareas por Autor", styles["Heading4"]))
-        elements.append(Spacer(1, 8))
-        
-        for author in devops_authors:
-            tareas = tasks_config.get(author, "0/0")
-            try:
-                done, total = map(int, tareas.split("/"))
-                if total > 0:
-                    percentage = int((done / total) * 100)
-                    if done == total:
-                        status = "Completado"
-                    else:
-                        status = f"{done}/{total} completadas"
-                    task_detail = f"• {author}: {tareas} tareas ({percentage}%) - {status}"
-                else:
-                    task_detail = f"• {author}: Sin tareas asignadas"
-            except:
-                task_detail = f"• {author}: Configuración de tareas inválida"
-            
-            elements.append(Paragraph(task_detail, styles["Normal"]))
+    elements.append(Spacer(1, 20))
+    elements.append(Paragraph("Detalle de Tareas", styles["Heading3"]))
+    elements.append(Spacer(1, 8))
+
+    for author in devops_authors:
+        elements.append(Paragraph(f"<b>{html.escape(author)}</b>", styles["Normal"]))
+        elements.append(Spacer(1, 4))
+
+        tasks = tasks_config.get(author, [])
+
+        total_weight = sum(t.get("score", 0) for t in tasks)
+        weighted_score = sum((t.get("progress", 0) * t.get("score", 0)) for t in tasks)
+        final_score = int(weighted_score / total_weight) if total_weight > 0 else 0
+
+        for t in tasks:
+            progress = t.get("progress", 0)
+            score = t.get("score", 0)
+
+            text = f"{progress}% | ({score} pts) <b>{html.escape(t['title'])}</b>: {html.escape(t['desc'])}"
+            elements.append(Paragraph(text, styles["Normal"]))
             elements.append(Spacer(1, 3))
-    except Exception as e:
-        print(f"⚠️ Error en detalle de tareas: {e}")
+
+        elements.append(Paragraph(f"<i>Score final: {final_score}</i>", styles["Normal"]))
+        elements.append(Spacer(1, 10))
 
     # ===============================
-    # MÉTRICAS DE CONSISTENCIA
+    # BUILD
     # ===============================
-    # if devops_data:
-    #     try:
-    #         elements.append(Spacer(1, 15))
-    #         elements.append(Paragraph("Métricas de Consistencia del Equipo", styles["Heading4"]))
-    #         elements.append(Spacer(1, 5))
-            
-    #         for data in sorted(devops_data, key=lambda x: x['consistency'], reverse=True):
-    #             author_name = data['author']
-    #             consistency = data['consistency']
-    #             consistency_text = f"• {author_name}: {consistency:.1f}/100"
-    #             elements.append(Paragraph(consistency_text, styles["Normal"]))
-    #             elements.append(Spacer(1, 2))
-    #     except Exception as e:
-    #         print(f"⚠️ Error en métricas: {e}")
+    doc.build(elements)
+
+    print(f"✅ PDF generado en: {output_path}")
 
     # ===============================
-    # NOTAS Y CONCLUSIONES
+    # RESUMEN CONSOLA
     # ===============================
-    try:
-        elements.append(Spacer(1, 20))
-        footer_text = """
-        Notas:
-        • Puntuación de tareas: basada en el porcentaje de tareas completadas
-        • Los autores DevOps son evaluados tanto por su contribución en código como por la finalización de tareas
-        • Este reporte complementa el ranking general de consistencia
-        """
-        elements.append(Paragraph(footer_text, styles["Normal"]))
-    except Exception as e:
-        print(f"⚠️ Error en notas: {e}")
+    print("\nResumen:")
+    for author in devops_authors:
+        tasks = tasks_config.get(author, [])
 
-    # ===============================
-    # GENERAR PDF
-    # ===============================
-    try:
-        doc.build(elements)
-        print(f"✅ PDF DevOps generado en: {output_path}")
-        print("\n📊 Resumen del Equipo DevOps:")
-        for author in devops_authors:
-            tareas = tasks_config.get(author, "0/0")
-            try:
-                done, total = map(int, tareas.split("/"))
-                if total > 0:
-                    percentage = int((done / total) * 100)
-                    print(f"  • {author}: {done}/{total} tareas completadas ({percentage}%)")
-                else:
-                    print(f"  • {author}: Sin tareas asignadas")
-            except:
-                print(f"  • {author}: Error en configuración de tareas")
-        
-        # Mostrar estadísticas de commits
-        if devops_data:
-            print(f"\n📈 Estadísticas de código:")
-            print(f"  • Total commits: {total_devops_commits:,}")
-            print(f"  • Total líneas: {total_devops_lines:,}")
-    except Exception as e:
-        print(f"❌ Error al generar PDF: {e}")
+        total_weight = sum(t.get("score", 0) for t in tasks)
+        weighted_score = sum((t.get("progress", 0) * t.get("score", 0)) for t in tasks)
+
+        final_score = int(weighted_score / total_weight) if total_weight > 0 else 0
+
+        print(f"• {author}: {final_score}%")
 
 
 if __name__ == "__main__":
     generate_devops_pdf(
-        csv_path="data/author_consistency_report.csv",
-        output_path="data/devops_report.pdf",
         since="2026-03-20",
         until="2026-03-27",
         branches=["main", "develop"]

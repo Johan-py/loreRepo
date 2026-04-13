@@ -53,8 +53,8 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
     # Validar columnas necesarias
     # -------------------------------
     required_columns = [
-        "author", "total_commits", "total_lines_changed",
-        "commit_score",  # 🆕
+        "author", "team", "total_commits", "total_lines_changed",
+        "commit_score",
         "message_score", "size_score", "frequency_score",
         "granularity_score", "consistency_score"
     ]
@@ -223,8 +223,10 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
             lines = int(row['total_lines_changed'])
             
             medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉"
+            team = html.escape(str(row.get("team", "Sin equipo")))
+
             text = (
-                f"{medal} {i}. {author_name} — Score: {score:.2f} | "
+                f"{medal} {i}. {author_name} ({team}) — Score: {score:.2f} | "
                 f"C:{row['commit_score']:.0f} M:{row['message_score']:.0f} "
                 f"S:{row['size_score']:.0f} F:{row['frequency_score']:.0f} "
                 f"G:{row['granularity_score']:.0f}"
@@ -244,13 +246,9 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
         elements.append(Spacer(1, 8))
         
         columns = [
-            "Autor", "Commits", "Líneas",
-            "Commits#",   # 🆕
-            "Mensajes",
-            "Tamaño",
-            "Frecuencia",
-            "Granularidad",
-            "Score"
+            "Autor", "Equipo", "Commits", "Líneas",
+            "Commits", "Mensajes", "Tamaño",
+            "Frecuen", "Granulari", "Score"
         ]
         data = [columns]
 
@@ -270,6 +268,7 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
             
             data.append([
                 html.escape(str(row["author"])),
+                html.escape(str(row.get("team", "Sin equipo"))),
                 f"{int(row['total_commits']):,}",
                 f"{int(row['total_lines_changed']):,}",
                 format_score(row["commit_score"]),
@@ -281,7 +280,7 @@ def generate_pdf_from_csv(csv_path="data/author_consistency_report.csv",
             ])
 
         # Calcular anchos de columna
-        col_widths = [130, 50, 60, 50, 50, 50, 50, 55, 60]
+        col_widths = [130, 90, 45, 55, 45, 50, 45, 45, 50, 45]        
         table = LongTable(data, repeatRows=1, colWidths=col_widths)
 
         # Estilo base de la tabla
