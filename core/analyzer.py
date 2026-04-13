@@ -10,10 +10,10 @@ REPO_DIR = "repo_temp"
 # ===============================
 # ⚙️ CONFIG DE SPRINT
 # ===============================
-SPRINT_DAYS = 21
-IDEAL_MIN_COMMITS = 7
-IDEAL_MAX_COMMITS = 100
-IDEAL_COMMITS_PER_SPRINT = 10
+SPRINT_DAYS = None
+IDEAL_MAX_COMMITS = 300
+IDEAL_MIN_COMMITS = 20
+IDEAL_COMMITS_PER_SPRINT = 30
 # ===============================
 # 🔧 UTILIDADES
 # ===============================
@@ -44,11 +44,11 @@ def compute_commit_score(total_commits):
     return clamp(100 - (excess * 5))
 
 
-def compute_frequency_score(days_active, total_commits):
-    activity_ratio = days_active / SPRINT_DAYS
-    commits_per_day = total_commits / SPRINT_DAYS
+def compute_frequency_score(days_active, total_commits, total_days):
+    activity_ratio = days_active / total_days
+    commits_per_day = total_commits / total_days
 
-    ideal_per_day = IDEAL_COMMITS_PER_SPRINT / SPRINT_DAYS
+    ideal_per_day = IDEAL_COMMITS_PER_SPRINT / total_days
     intensity_score = min(1, commits_per_day / ideal_per_day)
 
     return clamp((0.6 * activity_ratio + 0.4 * intensity_score) * 100)
@@ -341,8 +341,7 @@ def normalize_authors(df, df_users):
         e = normalize_text(email)
 
         # limpiar emails tipo user+alias@github.com
-        e = re.sub(r".*\+", "", e)
-
+        e = re.sub(r"\+.*@", "@", e)
         # match por username
         if a in mapping_user:
             return mapping_user[a]
@@ -380,8 +379,7 @@ def compute_consistency(df):
     IDEAL_MIN_LINES = 20
     IDEAL_MAX_LINES = 300
 
-    pattern = r"^(feat|fix|docs|refactor|test|chore|add)(\(.+\))?:\s*.+"
-
+    pattern = r"^(feat|fix|docs|refactor|test|chore|build|ci|perf|style)(\(.+\))?:\s+.+"
     report = []
 
     for author, data in df.groupby("display_name"):
@@ -422,8 +420,8 @@ def compute_consistency(df):
 
         # 📅 Frecuencia
         days_active = data["date"].dt.floor("D").nunique()
-        frequency_score = compute_frequency_score(days_active, total_commits)
-
+        total_days = (data["date"].max() - data["date"].min()).days + 1
+        frequency_score = compute_frequency_score(days_active, total_commits, total_days)
         # 📦 Granularidad (commits grandes)
         big_commits = (data["changes"] > BIG_COMMIT_THRESHOLD).sum()
         granularity_score = clamp(
@@ -550,9 +548,7 @@ def run_analysis(repo_url, since=None, until=None, branches=None, include_all_hi
     # Guardar resultados
     os.makedirs("data", exist_ok=True)
     report.to_csv("data/author_consistency_report.csv", index=False)
-    # Guardar resultados
-    os.makedirs("data", exist_ok=True)
-    report.to_csv("data/author_consistency_report.csv", index=False)
+
     
     # Guardar metadata
     metadata = {

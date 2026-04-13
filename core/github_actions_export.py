@@ -2,16 +2,19 @@ import requests
 import csv
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
+from dotenv import load_dotenv
 
+load_dotenv()
 # ─────────────────────────────────────────────
 # CONFIG
 # ─────────────────────────────────────────────
 OWNER = "Johan-py"
 REPO = "PropBol"
 
-TOKEN = os.getenv("GITHUB_TOKEN")
+COMMIT_CACHE = {}
 
+TOKEN = os.getenv("GITHUB_TOKEN")
 HEADERS = {
     "Accept": "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
@@ -22,7 +25,7 @@ if TOKEN:
 
 BASE_URL = f"https://api.github.com/repos/{OWNER}/{REPO}"
 
-OUTPUT_DIR = "/home/dantalion/Documents/devOpsCore/loreRepo/data"
+OUTPUT_DIR = os.getenv("OUTPUT_DIR", "data")
 
 DELAY = 0.2
 TIMEOUT = 10
@@ -30,7 +33,7 @@ MAX_RETRIES = 3
 
 
 # ─────────────────────────────────────────────
-# PAGINACIÓN
+# PAGINACIÓN (ROBUSTA)
 # ─────────────────────────────────────────────
 def get_paginated(url):
     results = []
@@ -38,6 +41,7 @@ def get_paginated(url):
 
     while True:
         print(f"📄 Página {page}...")
+
         resp = requests.get(
             url,
             headers=HEADERS,
@@ -49,22 +53,38 @@ def get_paginated(url):
             print(f"❌ Error {resp.status_code}: {resp.text[:100]}")
             break
 
-        data = resp.json()
+        try:
+            data = resp.json()
+        except Exception:
+            print("⚠️ Respuesta inválida de GitHub API")
+            break
+
+        if not isinstance(data, dict):
+            print("⚠️ Formato inesperado en respuesta API")
+            break
+
         items = data.get("workflow_runs", [])
 
         if not items:
             break
 
         results.extend(items)
+
+        if len(items) < 100:
+            break
+
         page += 1
 
     return results
 
 
 # ─────────────────────────────────────────────
-# AUTOR DEL COMMIT (ROBUSTO)
+# AUTOR DEL COMMIT (ROBUSTO + CACHE)
 # ─────────────────────────────────────────────
 def get_commit_author(sha):
+    if sha in COMMIT_CACHE:
+        return COMMIT_CACHE[sha]
+
     url = f"{BASE_URL}/commits/{sha}"
 
     for attempt in range(1, MAX_RETRIES + 1):
@@ -74,8 +94,9 @@ def get_commit_author(sha):
             resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
 
             if resp.status_code == 404:
-                print(f"⚠️ SHA no encontrado: {sha}")
-                return "unknown", "unknown"
+                result = ("unknown", "unknown")
+                COMMIT_CACHE[sha] = result
+                return result
 
             if resp.status_code == 403:
                 print("⛔ Rate limit alcanzado. Esperando 10s...")
@@ -91,7 +112,9 @@ def get_commit_author(sha):
             name = data.get("commit", {}).get("author", {}).get("name", "unknown")
             email = data.get("commit", {}).get("author", {}).get("email", "unknown")
 
-            return name, email
+            result = (name, email)
+            COMMIT_CACHE[sha] = result
+            return result
 
         except requests.exceptions.Timeout:
             print(f"⏳ Timeout en SHA {sha} (intento {attempt})")
@@ -99,7 +122,19 @@ def get_commit_author(sha):
         except Exception as e:
             print(f"❌ Error inesperado en SHA {sha}: {e}")
 
-    return "unknown", "unknown"
+    result = ("unknown", "unknown")
+    COMMIT_CACHE[sha] = result
+    return result
+
+
+# ─────────────────────────────────────────────
+# SAFE DATE PARSER
+# ─────────────────────────────────────────────
+def safe_parse(date_str):
+    try:
+        return datetime.fromisoformat(date_str)
+    except:
+        return None
 
 
 # ─────────────────────────────────────────────
@@ -109,13 +144,13 @@ def filter_runs_by_date(runs, since=None, until=None):
     if not since and not until:
         return runs
 
-    since_dt = datetime.fromisoformat(since) if since else None
-    until_dt = datetime.fromisoformat(until) if until else None
+    since_dt = datetime.fromisoformat(since).replace(tzinfo=timezone.utc) if since else None
+    until_dt = datetime.fromisoformat(until).replace(tzinfo=timezone.utc) if until else None
 
     filtered = []
 
     for r in runs:
-        created = datetime.fromisoformat(r["created_at"].replace("Z", ""))
+        created = datetime.fromisoformat(r["created_at"].replace("Z", "+00:00"))
 
         if since_dt and created < since_dt:
             continue
@@ -126,9 +161,8 @@ def filter_runs_by_date(runs, since=None, until=None):
 
     return filtered
 
-
 # ─────────────────────────────────────────────
-# EXPORT CSV CON PROGRESO
+# EXPORT CSV
 # ─────────────────────────────────────────────
 def export_runs_csv(runs, filename):
     campos = [
@@ -142,6 +176,8 @@ def export_runs_csv(runs, filename):
         "event",
         "commit_author_name",
         "commit_author_email",
+        "commit_author_name_norm",
+        "commit_author_email_norm",
     ]
 
     total = len(runs)
@@ -172,6 +208,10 @@ def export_runs_csv(runs, filename):
                 "event": r.get("event"),
                 "commit_author_name": name,
                 "commit_author_email": email,
+
+                # NORMALIZACIÓN (MEJORA CLAVE)
+                "commit_author_name_norm": name.lower().strip(),
+                "commit_author_email_norm": email.lower().strip(),
             })
 
     print(f"\n✅ CSV generado: {filename}")

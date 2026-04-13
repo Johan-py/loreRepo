@@ -22,7 +22,10 @@ from ui.profile_sumary import ProfileSummary
 from core.analyzer import run_analysis
 from core.generate_report import generate_pdf_from_csv  
 from core.generate_report_devops import generate_devops_pdf as generate_devops_pdf_func
-
+import os
+from core.generate_PO_report import generate_team_report
+from datetime import datetime
+from core.github_actions_export import main as fetch_pipeline
 
 # ==============================
 # THREAD PARA ANÁLISIS ASÍNCRONO
@@ -246,6 +249,47 @@ class MainWindow(QWidget):
         self.devops_pdf_button.clicked.connect(self.generate_devops_pdf)
         actions_layout.addWidget(self.devops_pdf_button)
 
+        # Botón generar PDF PO (con el código que proporcionaste)
+        self.po_pdf_button = QPushButton("📊 Generar PDF PO")
+        self.po_pdf_button.setMinimumHeight(40)
+        self.po_pdf_button.setEnabled(False)
+        self.po_pdf_button.setStyleSheet("""
+            QPushButton {
+                background-color: #9C27B0;
+                color: white;
+                font-weight: bold;
+                border-radius: 5px;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background-color: #7B1FA2;
+            }
+            QPushButton:disabled {
+                background-color: #cccccc;
+            }
+        """)
+        self.po_pdf_button.clicked.connect(self.generate_po_pdf)
+        actions_layout.addWidget(self.po_pdf_button)
+
+        # Botón obtener Pipeline (ejecuta el script de GitHub Actions)
+        self.pipeline_button = QPushButton("🔄 Obtener Pipeline")
+        self.pipeline_button.setMinimumHeight(40)
+        self.pipeline_button.setStyleSheet("""
+            QPushButton {
+                background-color: #607D8B;
+                color: white;
+                font-weight: bold;
+                border-radius: 5px;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background-color: #455A64;
+            }
+        """)
+        self.pipeline_button.clicked.connect(self.fetch_pipeline_data)
+        actions_layout.addWidget(self.pipeline_button)
+
+
         actions_group.setLayout(actions_layout)
         main_layout.addWidget(actions_group)
 
@@ -422,6 +466,173 @@ class MainWindow(QWidget):
         self.status_label.setText(message)
         QApplication.processEvents()
     
+    
+    def generate_po_pdf(self):
+        """Genera el PDF del PO con el código proporcionado"""
+        if self.df is None or self.df.empty:
+            QMessageBox.warning(self, "Advertencia", "⚠️ No hay datos para generar el PDF del PO")
+            return
+
+        try:
+            # Obtener fechas del análisis
+            full_history = self.full_history_checkbox.isChecked()
+            
+            if full_history:
+                since = None
+                until = None
+                date_range = "TODO el historial"
+            else:
+                since = self.since_input.date().toString("yyyy-MM-dd")
+                until = self.until_input.date().toString("yyyy-MM-dd")
+                date_range = f"{since} - {until}"
+            
+            # Guardar DataFrames temporales
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as author_tmp:
+                self.df.to_csv(author_tmp.name, index=False, encoding="utf-8")
+                author_csv = author_tmp.name
+            
+            # Necesitamos el pipeline CSV - si no existe, mostrar advertencia
+            pipeline_csv = "data/pipeline_runs.csv"
+            
+            if not os.path.exists(pipeline_csv):
+                QMessageBox.warning(
+                    self, 
+                    "Advertencia", 
+                    f"⚠️ No se encontró el archivo de pipeline: {pipeline_csv}\n\n"
+                    "Por favor, ejecuta 'Obtener Pipeline' primero para descargar los datos de GitHub Actions."
+                )
+                return
+            
+
+            output_pdf = "data/team_report.pdf"
+            
+            # Ejecutar la generación del reporte
+            generate_team_report(
+                author_csv=author_csv,
+                pipeline_csv=pipeline_csv,
+                output=output_pdf
+            )
+            
+            success_msg = f"✅ PDF del PO generado exitosamente!\n\n"
+            success_msg += f"📄 Archivo: {output_pdf}\n"
+            success_msg += f"📅 Rango: {date_range}\n"
+            success_msg += f"📊 Reporte incluye análisis de equipos y pipelines"
+            
+            self.status_label.setText(f"✅ PDF PO generado en: {output_pdf}")
+            QMessageBox.information(self, "Éxito", success_msg)
+            
+        except ImportError:
+            QMessageBox.critical(
+                self, 
+                "Error", 
+                "❌ No se pudo importar el módulo 'po_report'.\n"
+                "Asegúrate de que el código del reporte PO esté guardado en un archivo llamado 'po_report.py'"
+            )
+        except Exception as e:
+            error_msg = f"❌ Error al generar el PDF del PO: {str(e)}"
+            self.status_label.setText(error_msg)
+            QMessageBox.critical(self, "Error", error_msg)
+
+    def fetch_pipeline_data(self):
+        """Ejecuta el script para obtener datos del pipeline desde GitHub Actions"""
+        try:
+            # Obtener fechas de los inputs
+            full_history = self.full_history_checkbox.isChecked()
+            
+            if full_history:
+                # Si es historial completo, usar fechas por defecto amplias
+                since = "2024-01-01"
+                until = datetime.now().strftime("%Y-%m-%d")
+                date_msg = f"Desde: {since} hasta: {until}"
+            else:
+                since = self.since_input.date().toString("yyyy-MM-dd")
+                until = self.until_input.date().toString("yyyy-MM-dd")
+                date_msg = f"{since} - {until}"
+            
+            # Mostrar progreso
+            self.status_label.setText(f"🔄 Obteniendo datos del pipeline... {date_msg}")
+            self.status_label.setStyleSheet("color: orange; padding: 10px; font-weight: bold;")
+            QApplication.processEvents()
+            
+            # Crear un thread para la operación de pipeline
+            class PipelineThread(QThread):
+                finished = Signal(str)
+                error = Signal(str)
+                progress = Signal(str)
+                
+                def __init__(self, since, until):
+                    super().__init__()
+                    self.since = since
+                    self.until = until
+                
+                def run(self):
+                    try:
+                        # Importar el módulo de pipeline
+                        import sys
+                        import os
+                        
+                        # Asegurar que el directorio actual está en el path
+                        sys.path.insert(0, os.getcwd())
+                        
+                        # Importar la función main del pipeline
+                        
+                        self.progress.emit("📡 Conectando a GitHub API...")
+                        fetch_pipeline(since=self.since, until=self.until)
+                        self.finished.emit(f"✅ Pipeline obtenido exitosamente para el período: {self.since} - {self.until}")
+                        
+                    except ImportError:
+                        self.error.emit("❌ No se pudo importar el módulo 'github_actions_export'.\nAsegúrate de que el código esté guardado en 'core/github_actions_export.py'")
+
+                    except Exception as e:
+                        self.error.emit(f"❌ Error al obtener pipeline: {str(e)}")
+            
+            # Crear y ejecutar el thread
+            self.pipeline_thread = PipelineThread(since, until)
+            self.pipeline_thread.finished.connect(self.on_pipeline_finished)
+            self.pipeline_thread.error.connect(self.on_pipeline_error)
+            self.pipeline_thread.progress.connect(self.on_pipeline_progress)
+            
+            # Deshabilitar botón durante la operación
+            self.pipeline_button.setEnabled(False)
+            self.progress_bar.setVisible(True)
+            self.progress_bar.setRange(0, 0)
+            
+            self.pipeline_thread.start()
+            
+        except Exception as e:
+            error_msg = f"❌ Error al iniciar la obtención del pipeline: {str(e)}"
+            self.status_label.setText(error_msg)
+            QMessageBox.critical(self, "Error", error_msg)
+
+    def on_pipeline_progress(self, message):
+        """Actualizar progreso del pipeline"""
+        self.status_label.setText(message)
+        QApplication.processEvents()
+
+    def on_pipeline_finished(self, message):
+        """Pipeline obtenido exitosamente"""
+        self.progress_bar.setVisible(False)
+        self.pipeline_button.setEnabled(True)
+        
+        self.status_label.setText(message)
+        self.status_label.setStyleSheet("color: green; padding: 10px; font-weight: bold;")
+        
+        # Habilitar el botón de PDF del PO ahora que tenemos datos de pipeline
+        self.po_pdf_button.setEnabled(True)
+        
+        QMessageBox.information(self, "Éxito", message)
+
+    def on_pipeline_error(self, error_msg):
+        """Error al obtener pipeline"""
+        self.progress_bar.setVisible(False)
+        self.pipeline_button.setEnabled(True)
+        
+        self.status_label.setText(error_msg)
+        self.status_label.setStyleSheet("color: red; padding: 10px; font-weight: bold;")
+        
+        QMessageBox.critical(self, "Error", error_msg)
+    
+    
     def on_analysis_finished(self, df):
         """Análisis completado exitosamente"""
 
@@ -476,6 +687,8 @@ class MainWindow(QWidget):
                 self.show_table(self.df)
                 self.pdf_button.setEnabled(True)
                 self.devops_pdf_button.setEnabled(True)
+                self.po_pdf_button.setEnabled(True)
+
 
                 # ==============================
                 # ESTADÍSTICAS
